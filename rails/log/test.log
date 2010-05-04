@@ -1,0 +1,464 @@
+  [4;36;1mSQL (0.2ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.1ms)[0m   [0m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;36;1mSQL (0.2ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+
+
+Processing MessagesController#index (for 0.0.0.0 at 2010-05-03 18:46:32) [GET]
+  Parameters: {"accept"=>"message/rfc822", "domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 1) | 401 Unauthorized [http://test.host/nhin.happyvalleypractice.example.org/drjones/messages?accept=message%2Frfc822]
+  [4;36;1mSQL (0.4ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.2ms)[0m   [0m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;36;1mSQL (0.1ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+
+
+Processing MessagesController#index (for 0.0.0.0 at 2010-05-03 19:02:45) [GET]
+  Parameters: {"accept"=>"message/rfc822", "domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 1) | 401 Unauthorized [http://test.host/nhin.happyvalleypractice.example.org/drjones/messages?accept=message%2Frfc822]
+  [4;36;1mSQL (0.5ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;35;1mSQL (0.1ms)[0m   [0m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+  [4;36;1mSQL (0.1ms)[0m   [0;1m SELECT name
+ FROM sqlite_master
+ WHERE type = 'table' AND NOT name = 'sqlite_sequence'
+[0m
+
+
+Processing MessagesController#index (for 0.0.0.0 at 2010-05-03 19:02:59) [GET]
+  Parameters: {"accept"=>"message/rfc822", "domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 1) | 401 Unauthorized [http://test.host/nhin.happyvalleypractice.example.org/drjones/messages?accept=message%2Frfc822]
+
+
+Processing MessagesController#index (for 0.0.0.0 at 2010-05-03 19:03:17) [GET]
+  Parameters: {"accept"=>"message/rfc822", "domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 1) | 401 Unauthorized [http://test.host/nhin.happyvalleypractice.example.org/drjones/messages?accept=message%2Frfc822]
+
+
+Processing MessagesController#index (for 0.0.0.0 at 2010-05-03 19:04:29) [GET]
+  Parameters: {"accept"=>"message/rfc822", "domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 1) | 401 Unauthorized [http://test.host/nhin.happyvalleypractice.example.org/drjones/messages?accept=message%2Frfc822]
+
+
+Processing MessagesController#index (for 0.0.0.0 at 2010-05-03 19:06:33) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 1) | 401 Unauthorized [http://test.host/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 0.0.0.0 at 2010-05-03 19:06:33) [GET]
+  Parameters: {"accept"=>"application/atom+xml", "domain"=>"nhin.happyvalleypractice.example.org", "authorization"=>"Basic ZHJqb25lc0BuaGluLmhhcHB5dmFsbGV5cHJhY3RpY2UuZXhhbXBsZS5vcmc6\nZHJqb25lc19zZWNyZXQ=\n", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 0) | 401 Unauthorized [http://test.host/nhin.happyvalleypractice.example.org/drjones/messages?accept=application%2Fatom%2Bxml&authorization=Basic+ZHJqb25lc0BuaGluLmhhcHB5dmFsbGV5cHJhY3RpY2UuZXhhbXBsZS5vcmc6%0AZHJqb25lc19zZWNyZXQ%3D%0A]
+
+
+Processing MessagesController#index (for 0.0.0.0 at 2010-05-03 19:09:18) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 1) | 401 Unauthorized [http://test.host/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 0.0.0.0 at 2010-05-03 19:09:18) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "authorization"=>"Basic ZHJqb25lc0BuaGluLmhhcHB5dmFsbGV5cHJhY3RpY2UuZXhhbXBsZS5vcmc6\nZHJqb25lc19zZWNyZXQ=\n", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 0) | 401 Unauthorized [http://test.host/nhin.happyvalleypractice.example.org/drjones/messages?authorization=Basic+ZHJqb25lc0BuaGluLmhhcHB5dmFsbGV5cHJhY3RpY2UuZXhhbXBsZS5vcmc6%0AZHJqb25lc19zZWNyZXQ%3D%0A]
+
+
+Processing MessagesController#index (for 0.0.0.0 at 2010-05-03 19:09:31) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 1) | 401 Unauthorized [http://test.host/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 0.0.0.0 at 2010-05-03 19:09:31) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "authorization"=>"Basic ZHJqb25lc0BuaGluLmhhcHB5dmFsbGV5cHJhY3RpY2UuZXhhbXBsZS5vcmc6\nZHJqb25lc19zZWNyZXQ=\n", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 0) | 401 Unauthorized [http://test.host/nhin.happyvalleypractice.example.org/drjones/messages?authorization=Basic+ZHJqb25lc0BuaGluLmhhcHB5dmFsbGV5cHJhY3RpY2UuZXhhbXBsZS5vcmc6%0AZHJqb25lc19zZWNyZXQ%3D%0A]
+
+
+Processing MessagesController#index (for 0.0.0.0 at 2010-05-03 19:10:03) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 1) | 401 Unauthorized [http://test.host/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 0.0.0.0 at 2010-05-03 19:10:25) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 1) | 401 Unauthorized [http://test.host/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing ApplicationController#index (for 127.0.0.1 at 2010-05-03 19:22:33) [GET]
+
+ActionController::RoutingError (No route matches "/index" with {:method=>:get}):
+  test/integration/messages_test.rb:7:in `test_should_404_when_not_auth'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit.rb:278
+  test/integration/messages_test.rb:6
+
+Rendering rescues/layout (not_found)
+
+
+Processing ApplicationController#index (for 127.0.0.1 at 2010-05-03 19:22:54) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+
+ActionController::RoutingError (No route matches "/index" with {:method=>:get}):
+  test/integration/messages_test.rb:7:in `test_should_404_when_not_auth'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit.rb:278
+  test/integration/messages_test.rb:6
+
+Rendering rescues/layout (not_found)
+
+
+Processing ApplicationController#index (for 127.0.0.1 at 2010-05-03 19:26:23) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+
+ActionController::RoutingError (No route matches "/index" with {:method=>:get}):
+  test/integration/messages_test.rb:7:in `test_should_404_when_not_auth'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit.rb:278
+  test/integration/messages_test.rb:6
+
+Rendering rescues/layout (not_found)
+
+
+Processing ApplicationController#index (for 127.0.0.1 at 2010-05-03 19:26:31) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+
+ActionController::RoutingError (No route matches "/index" with {:method=>:get}):
+  test/integration/messages_test.rb:7:in `test_should_404_when_not_auth'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit.rb:278
+  test/integration/messages_test.rb:6
+
+Rendering rescues/layout (not_found)
+
+
+Processing ApplicationController#index (for 127.0.0.1 at 2010-05-03 19:35:13) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+
+ActionController::RoutingError (No route matches "/index" with {:method=>:get}):
+  test/integration/messages_test.rb:11:in `test_should_401_when_not_auth'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit.rb:278
+  test/integration/messages_test.rb:10
+
+Rendering rescues/layout (not_found)
+
+
+Processing ApplicationController#index (for 127.0.0.1 at 2010-05-03 19:35:42) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+
+ActionController::RoutingError (No route matches "/index" with {:method=>:get}):
+  test/integration/messages_test.rb:11:in `test_should_401_when_not_auth'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit.rb:278
+  test/integration/messages_test.rb:10
+
+Rendering rescues/layout (not_found)
+
+
+Processing ApplicationController#index (for 127.0.0.1 at 2010-05-03 19:36:33) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+
+ActionController::RoutingError (No route matches "/index" with {:method=>:get}):
+  test/integration/messages_test.rb:11:in `test_should_401_when_not_auth'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:34:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `each'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/testsuite.rb:33:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/testrunnermediator.rb:46:in `run_suite'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:67:in `start_mediator'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/console/testrunner.rb:41:in `start'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/ui/testrunnerutilities.rb:29:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/autorunner.rb:216:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit/autorunner.rb:12:in `run'
+  /System/Library/Frameworks/Ruby.framework/Versions/1.8/usr/lib/ruby/1.8/test/unit.rb:278
+  test/integration/messages_test.rb:10
+
+Rendering rescues/layout (not_found)
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 19:41:42) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 1) | 401 Unauthorized [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 19:43:24) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 1) | 401 Unauthorized [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 19:49:03) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 1) | 401 Unauthorized [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 19:49:13) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 1) | 401 Unauthorized [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 19:52:30) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 1) | 401 Unauthorized [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 19:54:54) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 1) | 401 Unauthorized [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 19:54:54) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+  [4;36;1mMessage Load (0.2ms)[0m   [0;1mSELECT * FROM "messages" WHERE (to_endpoint = 'drjones' AND to_domain = 'nhin.happyvalleypractice.example.org' ) [0m
+Rendering template within layouts/messages
+Rendering messages/index
+Completed in 6ms (View: 4, DB: 0) | 200 OK [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 19:55:04) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 1) | 401 Unauthorized [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 19:55:04) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+  [4;36;1mMessage Load (0.3ms)[0m   [0;1mSELECT * FROM "messages" WHERE (to_endpoint = 'drjones' AND to_domain = 'nhin.happyvalleypractice.example.org' ) [0m
+Rendering template within layouts/messages
+Rendering messages/index
+Completed in 6ms (View: 4, DB: 0) | 200 OK [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 20:06:29) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+  [4;36;1mMessage Load (0.3ms)[0m   [0;1mSELECT * FROM "messages" WHERE (to_endpoint = 'drjones' AND to_domain = 'nhin.happyvalleypractice.example.org' ) [0m
+Rendering template within layouts/messages
+Rendering messages/index
+Completed in 7ms (View: 4, DB: 1) | 200 OK [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 20:06:29) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0ms (View: 0, DB: 0) | 401 Unauthorized [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 20:06:29) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+  [4;35;1mMessage Load (0.2ms)[0m   [0mSELECT * FROM "messages" WHERE (to_endpoint = 'drjones' AND to_domain = 'nhin.happyvalleypractice.example.org' ) [0m
+Rendering template within layouts/messages
+Rendering messages/index
+Completed in 2ms (View: 1, DB: 0) | 200 OK [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 20:07:04) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+  [4;36;1mMessage Load (0.3ms)[0m   [0;1mSELECT * FROM "messages" WHERE (to_endpoint = 'drjones' AND to_domain = 'nhin.happyvalleypractice.example.org' ) [0m
+Rendering template within layouts/messages
+Rendering messages/index
+Completed in 7ms (View: 4, DB: 1) | 200 OK [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 20:07:04) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0ms (View: 0, DB: 0) | 401 Unauthorized [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 20:07:04) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+  [4;35;1mMessage Load (0.2ms)[0m   [0mSELECT * FROM "messages" WHERE (to_endpoint = 'drjones' AND to_domain = 'nhin.happyvalleypractice.example.org' ) [0m
+Rendering template within layouts/messages
+Rendering messages/index
+Completed in 2ms (View: 1, DB: 0) | 200 OK [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 20:07:30) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+  [4;36;1mMessage Load (0.3ms)[0m   [0;1mSELECT * FROM "messages" WHERE (to_endpoint = 'drjones' AND to_domain = 'nhin.happyvalleypractice.example.org' ) [0m
+Rendering template within layouts/messages
+Rendering messages/index
+Completed in 7ms (View: 5, DB: 1) | 200 OK [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 20:07:30) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 0) | 401 Unauthorized [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 20:07:30) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+  [4;35;1mMessage Load (0.2ms)[0m   [0mSELECT * FROM "messages" WHERE (to_endpoint = 'drjones' AND to_domain = 'nhin.happyvalleypractice.example.org' ) [0m
+Rendering template within layouts/messages
+Rendering messages/index
+Completed in 2ms (View: 1, DB: 0) | 200 OK [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 20:07:41) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+  [4;36;1mMessage Load (0.3ms)[0m   [0;1mSELECT * FROM "messages" WHERE (to_endpoint = 'drjones' AND to_domain = 'nhin.happyvalleypractice.example.org' ) [0m
+Rendering template within layouts/messages
+Rendering messages/index
+Completed in 7ms (View: 4, DB: 1) | 200 OK [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 20:07:41) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 0ms (View: 0, DB: 0) | 401 Unauthorized [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 20:07:41) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+  [4;35;1mMessage Load (0.2ms)[0m   [0mSELECT * FROM "messages" WHERE (to_endpoint = 'drjones' AND to_domain = 'nhin.happyvalleypractice.example.org' ) [0m
+Rendering template within layouts/messages
+Rendering messages/index
+Completed in 2ms (View: 1, DB: 0) | 200 OK [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 20:08:13) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+  [4;36;1mMessage Load (0.3ms)[0m   [0;1mSELECT * FROM "messages" WHERE (to_endpoint = 'drjones' AND to_domain = 'nhin.happyvalleypractice.example.org' ) [0m
+Rendering template within layouts/messages
+Rendering messages/index
+Completed in 7ms (View: 4, DB: 1) | 200 OK [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 20:08:13) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 0) | 401 Unauthorized [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 20:08:13) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+  [4;35;1mMessage Load (0.3ms)[0m   [0mSELECT * FROM "messages" WHERE (to_endpoint = 'drjones' AND to_domain = 'nhin.happyvalleypractice.example.org' ) [0m
+Rendering template within layouts/messages
+Rendering messages/index
+Completed in 3ms (View: 1, DB: 0) | 200 OK [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index to atom (for 127.0.0.1 at 2010-05-03 20:09:08) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+  [4;36;1mMessage Load (0.3ms)[0m   [0;1mSELECT * FROM "messages" WHERE (to_endpoint = 'drjones' AND to_domain = 'nhin.happyvalleypractice.example.org' ) [0m
+Rendering messages/index
+You must provide the :schema_date option to atom_feed for your feed to be valid. A good default is the year you first created this feed.
+Completed in 5ms (View: 2, DB: 1) | 200 OK [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages.atom]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 20:09:08) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+Filter chain halted as [:authenticate] rendered_or_redirected.
+Completed in 1ms (View: 0, DB: 0) | 401 Unauthorized [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]
+
+
+Processing MessagesController#index (for 127.0.0.1 at 2010-05-03 20:09:08) [GET]
+  Parameters: {"domain"=>"nhin.happyvalleypractice.example.org", "endpoint"=>"drjones"}
+  [4;35;1mMessage Load (0.2ms)[0m   [0mSELECT * FROM "messages" WHERE (to_endpoint = 'drjones' AND to_domain = 'nhin.happyvalleypractice.example.org' ) [0m
+Rendering template within layouts/messages
+Rendering messages/index
+Completed in 5ms (View: 4, DB: 0) | 200 OK [http://www.example.com/nhin.happyvalleypractice.example.org/drjones/messages]

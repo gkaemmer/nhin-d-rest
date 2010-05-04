@@ -1,0 +1,7 @@
+TODO: Create security model (endpoint security: can POST new messages to any endpoint but can only GET from own)
+TODO: Test scripts
+TODO: Create Google Code site and checkin
+TODO: Package for remote deploy
+TODO: Setup message queue for posting to remote HISP
+TODO: Mail::Message.to_json
+TODO: Provider web inbox
