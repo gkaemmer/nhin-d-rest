@@ -4,6 +4,8 @@
 first:
     id: 1
     uuid: 176b4be7-3e9b-4a2d-85b7-25a1cd089877
+    to_domain: nhin.happyvalleypractice.example.org
+    to_endpoint: drjones
     raw_message: |
         From: drsmith@nhin.sunnyfamilypractice.example.org
         To: drjones@nhin.happyvalleypractice.example.org
@@ -26,6 +28,8 @@ first:
 
 second:
     id: 2
+    to_domain: nhin.happyvalleypractice.example.org
+    to_endpoint: drjones
     uuid: a641bb84-5681-44e1-9f56-1b3dabc1d962
     raw_message: |
         From: drsmith@nhin.sunnyfamilypractice.example.org
@@ -47,6 +51,8 @@ second:
     
 third:
     id: 3
+    to_domain: nhin.happyvalleypractice.example.org
+    to_endpoint: drjones
     uuid: deb7fdbd-8740-406d-96d9-74809cc3c507
     raw_message: |
         From: drsmith@nhin.sunnyfamilypractice.example.org

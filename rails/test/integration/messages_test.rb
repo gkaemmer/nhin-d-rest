@@ -14,25 +14,17 @@ class MessagesTest < ActionController::IntegrationTest
   
   def test_messages_should_return_atom 
     auth = ActionController::HttpAuthentication::Basic.encode_credentials('drjones@nhin.happyvalleypractice.example.org', 'drjones_secret')
-    @headers ||= {}
-    @headers['HTTP_ACCEPT'] = 'application/atom+xml'
-    get '/nhin.happyvalleypractice.example.org/drjones/messages',nil, :authorization => auth
+    get '/nhin.happyvalleypractice.example.org/drjones/messages',nil, {:authorization => auth, :accept => 'application/atom+xml'}
     assert_response :success
-    response.content_type == "application/atom+xml"
+    assert_equal response.content_type, "application/atom+xml"
   end
     
   def test_atom_feed_includes_url_to_message
     auth = ActionController::HttpAuthentication::Basic.encode_credentials('drjones@nhin.happyvalleypractice.example.org', 'drjones_secret')
-    @headers ||= {}
-    @headers['HTTP_ACCEPT'] = 'application/atom+xml'
-    get '/nhin.happyvalleypractice.example.org/drjones/messages.atom',nil, :authorization => auth
-    puts response.body
+    get '/nhin.happyvalleypractice.example.org/drjones/messages.atom',nil, {:authorization => auth, :accept => 'application/atom+xml'}
     feed = Feedzirra::Feed.parse(response.body.to_s)
     entry = feed.entries.first
-    assert URI::split(entry.url)[5] == '/nhin.happyvalleypractice.example.org/drjones/messages/176b4be7-3e9b-4a2d-85b7-25a1cd089877'
+    assert_equal URI::split(entry.url)[5], '/nhin.happyvalleypractice.example.org/drjones/messages/176b4be7-3e9b-4a2d-85b7-25a1cd089877'
   end
-
-  # it "returns an ATOM feed when authenticated" do
-  # end
-  
+    
 end
