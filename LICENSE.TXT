@@ -1,0 +1,4 @@
+The contributors to this project hereby agree to license their particular contributons here under the 3-Clause BSD License, a copy of which can be found at http://opensource.org/licenses/bsd-license.php.
+
+Signed:
+[Individual, Company]

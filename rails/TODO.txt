@@ -1,0 +1,8 @@
+TODO: Implement <mid>/status
+TODO: Validate good message/rfc822 format with required headers
+TODO: Better distinguish HISP and endpoint security model (HISP can only see messages HISP created)
+TODO: Package for remote deploy
+TODO: Setup message queue for posting to remote HISP
+TODO: Mail::Message.to_json
+TODO: Provider web inbox
+TODO: Move tests to rspec
