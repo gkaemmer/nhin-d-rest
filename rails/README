@@ -17,8 +17,8 @@ Sqlite3
 gem install rails mongrel
 
 cd nhin-d-rest/rails
-
 rake gems:install
+script/server -d
 rake db:migrate
 rake db:test:load
 rake test:integration

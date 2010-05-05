@@ -52,7 +52,7 @@ second:
 third:
     id: 3
     to_domain: nhin.happyvalleypractice.example.org
-    to_endpoint: drjones
+    to_endpoint: someoneelse
     uuid: deb7fdbd-8740-406d-96d9-74809cc3c507
     raw_message: |
         From: drsmith@nhin.sunnyfamilypractice.example.org
