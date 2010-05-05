@@ -23,26 +23,30 @@ import org.springframework.web.bind.annotation.ResponseBody;
  *
  */
 @Controller
-@RequestMapping("/1_0/{address}")
+@RequestMapping("/v1/{healthDomain}/{healthEndpoint}/messages")
 public class NhinDirect10Controller {
 
     @Autowired
     protected MessageStore messageStore;
 
-    @RequestMapping(value = "/messages", method = RequestMethod.GET)
+    @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public String getMessages(@PathVariable("address") String address) throws MessageStoreException {
-        HealthAddress ha = HealthAddress.parseUrnAddress(address);
+    public String getMessages(@PathVariable("healthDomain") String healthDomain,
+                              @PathVariable("healthEndpoint") String healthEndpoint) throws MessageStoreException {
+        
+        HealthAddress ha = new HealthAddress(healthDomain, healthEndpoint);
         List<Message> messages = messageStore.getMessages(ha);
         return AtomPublisher.createFeed(messages);
     }
 
-    @RequestMapping(value = "/messages", method = RequestMethod.POST)
+    @RequestMapping(value = "/", method = RequestMethod.POST)
     @ResponseBody
-    public String postMessage(@PathVariable("address") String address, @RequestBody String message)
+    public String postMessage(@PathVariable("healthDomain") String healthDomain,
+                              @PathVariable("healthEndpoint") String healthEndpoint,
+                              @RequestBody String message)
             throws MessageStoreException {
 
-        HealthAddress ha = HealthAddress.parseUrnAddress(address);
+        HealthAddress ha = new HealthAddress(healthDomain, healthEndpoint);
         Message m = new Message();
         m.setData(message.getBytes());
         m.setStatus("new");
@@ -52,33 +56,40 @@ public class NhinDirect10Controller {
         return Long.toString(messageId);
     }
 
-    @RequestMapping(value = "/message/{messageId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{messageId}", method = RequestMethod.GET)
     @ResponseBody
-    public String getMessage(@PathVariable("address") String address, @PathVariable("messageId") String messageId)
+    public String getMessage(@PathVariable("healthDomain") String healthDomain,
+                             @PathVariable("healthEndpoint") String healthEndpoint, 
+                             @PathVariable("messageId") String messageId)
             throws MessageStoreException {
-        HealthAddress ha = HealthAddress.parseUrnAddress(address);
+
+        HealthAddress ha = new HealthAddress(healthDomain, healthEndpoint);
         Message message = messageStore.getMessage(ha, Long.parseLong(messageId));
         return new String(message.getData());
     }
 
-    @RequestMapping(value = "/status/{messageId}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{messageId}/status", method = RequestMethod.GET)
     @ResponseBody
-    public String getMessageStatus(@PathVariable("address") String address, @PathVariable("messageId") String messageId)
+    public String getMessageStatus(@PathVariable("healthDomain") String healthDomain,
+                                   @PathVariable("healthEndpoint") String healthEndpoint,
+                                   @PathVariable("messageId") String messageId)
             throws MessageStoreException {
 
-        HealthAddress ha = HealthAddress.parseUrnAddress(address);
+        HealthAddress ha = new HealthAddress(healthDomain, healthEndpoint);
         Message message = messageStore.getMessage(ha, Long.parseLong(messageId));
         return message.getStatus();
     }
 
-    @RequestMapping(value = "/status/{messageId}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{messageId}/status", method = RequestMethod.PUT)
     @ResponseBody
-    public String setMessageStatus(@PathVariable("address") String address,
-                                   @PathVariable("messageId") String messageId, @RequestBody String status)
+    public String setMessageStatus(@PathVariable("healthDomain") String healthDomain,
+                                   @PathVariable("healthEndpoint") String healthEndpoint,
+                                   @PathVariable("messageId") String messageId, 
+                                   @RequestBody String status)
             throws NumberFormatException, MessageStoreException {
 
-        HealthAddress ha = HealthAddress.parseUrnAddress(address);
-        messageStore.setMessageStatus(ha, Long.parseLong(messageId), new MessageStatus(status));
-        return "message status updated to " + status + " for message id " + messageId + " for address " + address;
+        HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
+        messageStore.setMessageStatus(address, Long.parseLong(messageId), new MessageStatus(status));
+        return "message status updated to " + status + " for message id " + messageId + " for address " + address.toEmailAddress();
     }
 }
