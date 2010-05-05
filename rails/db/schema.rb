@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100428004943) do
+ActiveRecord::Schema.define(:version => 20100505182919) do
 
   create_table "messages", :force => true do |t|
     t.string   "uuid",        :null => false
@@ -23,5 +23,13 @@ ActiveRecord::Schema.define(:version => 20100428004943) do
   add_index "messages", ["to_domain"], :name => "index_messages_on_to_domain"
   add_index "messages", ["to_endpoint"], :name => "index_messages_on_to_endpoint"
   add_index "messages", ["uuid"], :name => "index_messages_on_uuid", :unique => true
+
+  create_table "statuses", :force => true do |t|
+    t.integer  "message_id"
+    t.string   "status"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.string   "message_uuid"
+  end
 
 end

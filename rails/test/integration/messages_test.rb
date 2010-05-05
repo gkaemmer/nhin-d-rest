@@ -8,8 +8,23 @@ class MessagesTest < ActionController::IntegrationTest
     @drj_root = '/nhin/v1/nhin.happyvalleypractice.example.org/drjones/messages'
   end
   
+  # There should be a messages resource corresponding to the requirements in the specification
   def test_should_route_to_index
     assert_routing @drj_root, {:controller => 'messages', :action => 'index', :domain => 'nhin.happyvalleypractice.example.org', :endpoint => 'drjones'}
+  end
+  
+  # There should be a message resource corresponding to the requirements in the specification
+  def test_should_route_to_message
+    assert_routing @drj_root + "/176b4be7-3e9b-4a2d-85b7-25a1cd089877",
+      {:controller => 'messages', :action => 'show', :domain => 'nhin.happyvalleypractice.example.org',
+       :endpoint => 'drjones', :id => '176b4be7-3e9b-4a2d-85b7-25a1cd089877'}
+  end
+  
+  # There should be a message status resource corresponding to the requirements in the specification
+  def test_should_route_to_message_status
+    assert_routing @drj_root + "/176b4be7-3e9b-4a2d-85b7-25a1cd089877/status",
+      {:controller => 'statuses', :action => 'show', :domain => 'nhin.happyvalleypractice.example.org',
+       :endpoint => 'drjones', :message_id => '176b4be7-3e9b-4a2d-85b7-25a1cd089877'}
   end
   
   # NHIN-D resources should require authorization
@@ -47,8 +62,9 @@ class MessagesTest < ActionController::IntegrationTest
    # * POST is in valid message/rfc822 format
    # * Message contains to header
    # * Content-Type is message/rfc822
-   # * Accepts: is message/rfc822
+   # TODO: remove this * Accepts: is message/rfc822
    # * The response return status code 200, and contains a reference to the newly created message
+   # * The newly created message is idetical to the message we POSTed
    def test_create_and_retrieve_message
      post @drj_root, SAMPLE_MESSAGE, {:authorization => @auth, :content_type => 'message/rfc822', :accept => 'message/rfc822'}
      assert_response :success
@@ -57,6 +73,14 @@ class MessagesTest < ActionController::IntegrationTest
      get loc, nil, {:authorization => @auth, :accept => 'message/rfc822'}
      assert_equal SAMPLE_MESSAGE, @response.body
    end
+   
+   def test_initial_message_status
+     post @drj_root, SAMPLE_MESSAGE, {:authorization => @auth, :content_type => 'message/rfc822', :accept => 'message/rfc822'}
+     loc = @response.location
+     get loc + '/status', nil, {:authorization => @auth, :accept => 'text/plain'}
+     assert_equal 'NEW', @response.body
+   end
+      
 end
 
 SAMPLE_MESSAGE = <<MESSAGE_END
