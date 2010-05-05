@@ -13,7 +13,7 @@ class MessagesController < ApplicationController
   # GET /messages
   # GET /messages.xml
   def index
-    # TODO: HISP should see only messages sent to HISP
+    # TODO: HISP should see only messages sent by HISP
     @messages = Message.find(:all, :conditions => ["to_endpoint = ? AND to_domain = ? ",params[:endpoint], params[:domain]])
 
     respond_to do |format|
