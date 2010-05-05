@@ -1,6 +1,6 @@
 ActionController::Routing::Routes.draw do |map|
   # Need the requirements bit to interpret the domain correctly.
-  map.resources :messages, :path_prefix => '/:domain/:endpoint', :requirements => {:domain => /.*/}
+  map.resources :messages, :path_prefix => '/nhin/v1/:domain/:endpoint', :requirements => {:domain => /.*/}
 
   # The priority is based upon order of creation: first created -> highest priority.
 
