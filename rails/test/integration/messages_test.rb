@@ -8,8 +8,23 @@ class MessagesTest < ActionController::IntegrationTest
     @drj_root = '/nhin/v1/nhin.happyvalleypractice.example.org/drjones/messages'
   end
   
+  # There should be a messages resource corresponding to the requirements in the specification
   def test_should_route_to_index
     assert_routing @drj_root, {:controller => 'messages', :action => 'index', :domain => 'nhin.happyvalleypractice.example.org', :endpoint => 'drjones'}
+  end
+  
+  # There should be a message resource corresponding to the requirements in the specification
+  def test_should_route_to_message
+    assert_routing @drj_root + "/176b4be7-3e9b-4a2d-85b7-25a1cd089877",
+      {:controller => 'messages', :action => 'show', :domain => 'nhin.happyvalleypractice.example.org',
+       :endpoint => 'drjones', :id => '176b4be7-3e9b-4a2d-85b7-25a1cd089877'}
+  end
+  
+  # There should be a message status resource corresponding to the requirements in the specification
+  def test_should_route_to_message_status
+    assert_routing @drj_root + "/176b4be7-3e9b-4a2d-85b7-25a1cd089877/status",
+      {:controller => 'statuses', :action => 'show', :domain => 'nhin.happyvalleypractice.example.org',
+       :endpoint => 'drjones', :message_id => '176b4be7-3e9b-4a2d-85b7-25a1cd089877'}
   end
   
   # NHIN-D resources should require authorization
@@ -47,16 +62,63 @@ class MessagesTest < ActionController::IntegrationTest
    # * POST is in valid message/rfc822 format
    # * Message contains to header
    # * Content-Type is message/rfc822
-   # * Accepts: is message/rfc822
+   # TODO: remove this * Accepts: is message/rfc822
    # * The response return status code 200, and contains a reference to the newly created message
+   # * The newly created message is idetical to the message we POSTed
    def test_create_and_retrieve_message
      post @drj_root, SAMPLE_MESSAGE, {:authorization => @auth, :content_type => 'message/rfc822', :accept => 'message/rfc822'}
-     assert_response :success
+     assert_response :created
      assert_equal @response.content_type, 'message/rfc822' 
      loc = @response.location
      get loc, nil, {:authorization => @auth, :accept => 'message/rfc822'}
      assert_equal SAMPLE_MESSAGE, @response.body
    end
+
+   def create_message(message)
+     post @drj_root, message, {:authorization => @auth, :content_type => 'message/rfc822', :accept => 'message/rfc822'}
+     return @response.location
+   end
+   
+   def status_uri(message_uri)
+     return message_uri + '/status'
+   end
+   
+   # A message should be created with initial status of NEW
+   def test_initial_message_status
+     loc = create_message(SAMPLE_MESSAGE)
+     get status_uri(loc), nil, {:authorization => @auth, :accept => 'text/plain'}
+     assert_response :success
+     assert_equal 'NEW', @response.body
+   end
+   
+   
+   # A message may be updated to status ACK
+   def test_update_message_status_ack
+     loc = create_message(SAMPLE_MESSAGE)
+     put status_uri(loc), 'ACK', {:authorization => @auth, :content_type => 'text/plain', :accept => 'text/plain'}
+     assert_response :success
+     get status_uri(loc), nil, {:authorization => @auth, :accept => 'text/plain'}
+     assert_equal 'ACK', @response.body
+   end
+   
+   def create_message_and_update_status(message, status)
+     loc = create_message(SAMPLE_MESSAGE)
+     put status_uri(loc), status, {:authorization => @auth, :content_type => 'text/plain', :accept => 'text/plain'}
+   end
+   
+   # A message may be updated to status NACK
+   def test_update_message_status_nack
+     create_message_and_update_status(SAMPLE_MESSAGE, 'NACK')
+     get status_uri(loc), nil, {:authorization => @auth, :accept => 'text/plain'}
+     assert_equal 'NACK', @response.body
+   end
+   
+   # A message may not be updated to an invalid status
+   def test_update_message_status_nack
+     create_message_and_update_status(SAMPLE_MESSAGE, 'UCK')
+     assert_response :not_acceptable
+   end
+      
 end
 
 SAMPLE_MESSAGE = <<MESSAGE_END
