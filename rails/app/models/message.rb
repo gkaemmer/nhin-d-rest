@@ -1,8 +1,12 @@
 class Message < ActiveRecord::Base
   attr_readonly :uuid
+  has_one :status, :autosave => true
   
   def before_create
     self.uuid = UUIDTools::UUID.random_create.to_s
+    self.status = Status.new
+    self.status.status = 'NEW'
+    self.status.message_uuid = self.uuid
   end
   
   def before_save
