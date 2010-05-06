@@ -97,7 +97,6 @@ public class BasicFileMessageStore implements MessageStore {
             message.setStatus(MessageStatus.valueOf(m.group(2).toUpperCase()));
             message.setTimestamp(new Date(file.lastModified()));
             
-
             try {
                 BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
 

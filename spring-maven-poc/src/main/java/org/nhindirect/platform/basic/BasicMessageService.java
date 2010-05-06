@@ -24,8 +24,8 @@ public class BasicMessageService implements MessageService {
         List<Message> messages = messageStore.getMessages(address);
 
         // Filter out non-new messages
-        for (Iterator iterator = messages.iterator(); iterator.hasNext();) {
-            Message message = (Message) iterator.next();
+        for (Iterator<Message> iterator = messages.iterator(); iterator.hasNext();) {
+            Message message = iterator.next();
             
             if (message.getStatus() != MessageStatus.NEW) {
                 iterator.remove();
