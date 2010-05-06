@@ -1,18 +1,8 @@
 package org.nhindirect.platform;
 
-public class MessageStatus {
-
-    private String status;
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public MessageStatus(String status) {
-        this.status = status;
-    }
+/**
+ * Enumeration of supported MessageStatus values.
+ */
+public enum MessageStatus {
+    NEW, ACK, NACK
 }

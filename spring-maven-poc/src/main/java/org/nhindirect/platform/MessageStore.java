@@ -1,12 +1,13 @@
-package org.nhindirect.platform.store;
+package org.nhindirect.platform;
 
 import java.util.List;
 import java.util.UUID;
 
-import org.nhindirect.platform.HealthAddress;
-import org.nhindirect.platform.Message;
-import org.nhindirect.platform.MessageStatus;
 
+/**
+ * MessageStore interface. This interface defines the bare minimum functionality 
+ * needed to store messages in an NHIN Direct REST system. 
+ */
 public interface MessageStore {
 
     public List<Message> getMessages(HealthAddress address) throws MessageStoreException;
@@ -14,4 +15,4 @@ public interface MessageStore {
     public void putMessage(HealthAddress address, Message message) throws MessageStoreException;
     public void setMessageStatus(HealthAddress address, UUID messageId, MessageStatus status) throws MessageStoreException;
     
-}
+} 

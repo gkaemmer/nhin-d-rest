@@ -1,4 +1,4 @@
-package org.nhindirect.platform.store;
+package org.nhindirect.platform.basic;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -21,6 +21,8 @@ import org.apache.commons.logging.LogFactory;
 import org.nhindirect.platform.HealthAddress;
 import org.nhindirect.platform.Message;
 import org.nhindirect.platform.MessageStatus;
+import org.nhindirect.platform.MessageStore;
+import org.nhindirect.platform.MessageStoreException;
 
 /**
  * This is a basic implementation of a file based message store. It's goal is
@@ -92,7 +94,7 @@ public class BasicFileMessageStore implements MessageStore {
         Message message = new Message();
         if (m.matches()) {
             message.setMessageId(UUID.fromString(m.group(1)));
-            message.setStatus(m.group(2));
+            message.setStatus(MessageStatus.valueOf(m.group(2).toUpperCase()));
             message.setTimestamp(new Date(file.lastModified()));
             
 
@@ -102,6 +104,7 @@ public class BasicFileMessageStore implements MessageStore {
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 IOUtils.copy(in, out);
                 message.setData(out.toByteArray());
+                in.close();
             } catch (IOException e) {
                 throw new MessageStoreException(e);
             }
@@ -132,7 +135,7 @@ public class BasicFileMessageStore implements MessageStore {
         out.close();
     }
 
-    private String getMessageFileName(UUID messageId, String status) {
+    private String getMessageFileName(UUID messageId, MessageStatus status) {
         String fileName = messageId + "." + status + "." + MESSAGE_EXTENSION;
         return fileName;
     }
@@ -160,8 +163,9 @@ public class BasicFileMessageStore implements MessageStore {
 
         if (foundFile != null) {
             File newFileName;
-            newFileName = new File(foundFile.getParent(), getMessageFileName(messageId, status.getStatus()));
-            foundFile.renameTo(newFileName);
+            newFileName = new File(foundFile.getParent(), getMessageFileName(messageId, status));
+            boolean success = foundFile.renameTo(newFileName);
+            if (!success) throw new MessageStoreException("Message Status Update Failed");
         }
     }
 

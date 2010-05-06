@@ -9,10 +9,7 @@ import org.nhindirect.platform.HealthAddress;
 import org.nhindirect.platform.Message;
 
 /**
- * Simple publisher to convert a message list to an Atom feed. Things will get
- * complicated when we need to construct URIs. 
- * 
- * Initially just a proof of concept list of message not in Atom format.
+ * Simple publisher to convert a message list to an Atom feed. 
  */
 public class AtomPublisher {
     
@@ -21,6 +18,7 @@ public class AtomPublisher {
     public static String createFeed(String baseUri, HealthAddress address, List<Message> messages) {        
         
         StringBuilder fb = new StringBuilder();
+
         fb.append("<?xml version=\"1.0\" encoding=\"utf-8\"?>\n");
         
         fb.append("<feed xmlns=\"http://www.w3.org/2005/Atom\">\n");
@@ -82,12 +80,6 @@ public class AtomPublisher {
     </entry>
 </feed>
 */
-
-
-        
-        
-        //generateSimpleListFeed(messages);
-        
         return fb.toString();
     }
 }

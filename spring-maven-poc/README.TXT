@@ -40,14 +40,13 @@ An eclipse project can be generated for the project using the following maven co
 
 TODO:
 	Process correct content type headers for atom feed and other resources, ignored for now
-	Sort atom feed by message date
-	Filter non-new messages from atom feed
 	Parse submitted messages for from/to addresses
 	Push messages to remote HISP
 	Create a real message store via embedded DB or something less hokey than current file system store
 	Make sure the to/from semantics on the URI are correct 
 
-
+	DONE Sort atom feed by message date
+	DONE Filter non-new messages from atom feed
 
 Chris Moyer (MedPlus)
 cmoyer@medplus.com 

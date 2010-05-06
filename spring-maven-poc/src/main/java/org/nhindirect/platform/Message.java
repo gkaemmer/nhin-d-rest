@@ -7,7 +7,7 @@ public class Message {
     
     private UUID messageId;
     private byte[] data;
-    private String status;
+    private MessageStatus status;
     
     private HealthAddress to;
     private HealthAddress from;
@@ -30,11 +30,11 @@ public class Message {
         this.data = data;
     }
 
-    public String getStatus() {
+    public MessageStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(MessageStatus status) {
         this.status = status;
     }
 

@@ -7,9 +7,9 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.nhindirect.platform.HealthAddress;
 import org.nhindirect.platform.Message;
+import org.nhindirect.platform.MessageService;
 import org.nhindirect.platform.MessageStatus;
-import org.nhindirect.platform.store.MessageStore;
-import org.nhindirect.platform.store.MessageStoreException;
+import org.nhindirect.platform.MessageStoreException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,7 +30,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 public class NhinDirect10Controller {
 
     @Autowired
-    protected MessageStore messageStore;
+    protected MessageService messageService;
 
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
@@ -38,34 +38,25 @@ public class NhinDirect10Controller {
                               @PathVariable("healthDomain") String healthDomain,
                               @PathVariable("healthEndpoint") String healthEndpoint) throws MessageStoreException {
         
-        HealthAddress ha = new HealthAddress(healthDomain, healthEndpoint);
-        List<Message> messages = messageStore.getMessages(ha);
+        HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
+        List<Message> messages = messageService.getNewMessages(address);
         
-        
-        
-        return AtomPublisher.createFeed(request.getRequestURL().toString(), ha, messages);
+        return AtomPublisher.createFeed(request.getRequestURL().toString(), address, messages);
     }
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public String postMessage(@PathVariable("healthDomain") String healthDomain,
                               @PathVariable("healthEndpoint") String healthEndpoint,
-                              @RequestBody String message)
+                              @RequestBody String rawMessage)
             throws MessageStoreException {
 
-        HealthAddress ha = new HealthAddress(healthDomain, healthEndpoint);
-        
-        UUID messageId = UUID.randomUUID();
-        
-        Message m = new Message();
-        m.setData(message.getBytes());
-        m.setStatus("new");
-        m.setMessageId(messageId);
+        HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
+        Message message = messageService.createMessage(address, rawMessage);
 
-        messageStore.putMessage(ha, m);
-
-        return messageId.toString();
+        return message.getMessageId().toString();
     }
+    
 
     @RequestMapping(value = "/{messageId}", method = RequestMethod.GET)
     @ResponseBody
@@ -74,8 +65,9 @@ public class NhinDirect10Controller {
                              @PathVariable("messageId") String messageId)
             throws MessageStoreException {
 
-        HealthAddress ha = new HealthAddress(healthDomain, healthEndpoint);
-        Message message = messageStore.getMessage(ha, UUID.fromString(messageId));
+        HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
+        Message message = messageService.getMessage(address, UUID.fromString(messageId));
+
         return new String(message.getData());
     }
 
@@ -86,9 +78,10 @@ public class NhinDirect10Controller {
                                    @PathVariable("messageId") String messageId)
             throws MessageStoreException {
 
-        HealthAddress ha = new HealthAddress(healthDomain, healthEndpoint);
-        Message message = messageStore.getMessage(ha, UUID.fromString(messageId));
-        return message.getStatus();
+        HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
+        Message message = messageService.getMessage(address, UUID.fromString(messageId));
+
+        return message.getStatus().toString();
     }
 
     @RequestMapping(value = "/{messageId}/status", method = RequestMethod.PUT)
@@ -100,7 +93,8 @@ public class NhinDirect10Controller {
             throws NumberFormatException, MessageStoreException {
 
         HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
-        messageStore.setMessageStatus(address, UUID.fromString(messageId), new MessageStatus(status));
+        messageService.setMessageStatus(address, UUID.fromString(messageId), MessageStatus.valueOf(status));
+        
         return "message status updated to " + status + " for message id " + messageId + " for address " + address.toEmailAddress();
     }
 }
