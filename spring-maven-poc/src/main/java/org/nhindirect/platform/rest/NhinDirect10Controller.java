@@ -32,6 +32,9 @@ public class NhinDirect10Controller {
     @Autowired
     protected MessageService messageService;
 
+    /** 
+     * Get messages addressed to a specified health address.
+     */
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
     public String getMessages(HttpServletRequest request, 
@@ -44,6 +47,9 @@ public class NhinDirect10Controller {
         return AtomPublisher.createFeed(request.getRequestURL().toString(), address, messages);
     }
 
+    /**
+     * Post a message to a specified health address 
+     */
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public String postMessage(@PathVariable("healthDomain") String healthDomain,
@@ -57,7 +63,9 @@ public class NhinDirect10Controller {
         return message.getMessageId().toString();
     }
     
-
+    /**
+     * Get a specific message that was sent to the specified health address 
+     */
     @RequestMapping(value = "/{messageId}", method = RequestMethod.GET)
     @ResponseBody
     public String getMessage(@PathVariable("healthDomain") String healthDomain,
@@ -71,6 +79,9 @@ public class NhinDirect10Controller {
         return new String(message.getData());
     }
 
+    /**
+     * Get the status of a specific message sent to the specified health address   
+     */
     @RequestMapping(value = "/{messageId}/status", method = RequestMethod.GET)
     @ResponseBody
     public String getMessageStatus(@PathVariable("healthDomain") String healthDomain,
@@ -84,6 +95,9 @@ public class NhinDirect10Controller {
         return message.getStatus().toString();
     }
 
+    /**
+     * Set the status of a specific message sent to the specified health address
+     */
     @RequestMapping(value = "/{messageId}/status", method = RequestMethod.PUT)
     @ResponseBody
     public String setMessageStatus(@PathVariable("healthDomain") String healthDomain,
@@ -93,7 +107,7 @@ public class NhinDirect10Controller {
             throws NumberFormatException, MessageStoreException {
 
         HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
-        messageService.setMessageStatus(address, UUID.fromString(messageId), MessageStatus.valueOf(status));
+        messageService.setMessageStatus(address, UUID.fromString(messageId), MessageStatus.valueOf(status.toUpperCase()));
         
         return "message status updated to " + status + " for message id " + messageId + " for address " + address.toEmailAddress();
     }
