@@ -11,6 +11,7 @@
 
     <context:component-scan base-package="org.nhindirect.platform.rest"/>
 
-	<bean id="fileMessageStore" class="org.nhindirect.platform.store.BasicFileMessageStore"/>
+	<bean id="fileMessageStore" class="org.nhindirect.platform.basic.BasicFileMessageStore"/>
+	<bean id="messageService" class="org.nhindirect.platform.basic.BasicMessageService"/>
 	
 </beans>
