@@ -1,4 +1,4 @@
-package org.nhindirect.platform.store;
+package org.nhindirect.platform;
 
 import java.io.IOException;
 

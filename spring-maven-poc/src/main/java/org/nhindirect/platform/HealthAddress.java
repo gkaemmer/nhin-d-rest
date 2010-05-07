@@ -1,5 +1,9 @@
 package org.nhindirect.platform;
 
+/**
+ * Simple non-robust implementation of the relevant portions of the
+ * NHIN Direct Addressing specification.
+ */
 public class HealthAddress {
 
     private String domain;

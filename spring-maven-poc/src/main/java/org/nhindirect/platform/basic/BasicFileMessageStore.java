@@ -1,4 +1,4 @@
-package org.nhindirect.platform.store;
+package org.nhindirect.platform.basic;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -9,7 +9,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -19,6 +21,8 @@ import org.apache.commons.logging.LogFactory;
 import org.nhindirect.platform.HealthAddress;
 import org.nhindirect.platform.Message;
 import org.nhindirect.platform.MessageStatus;
+import org.nhindirect.platform.MessageStore;
+import org.nhindirect.platform.MessageStoreException;
 
 /**
  * This is a basic implementation of a file based message store. It's goal is
@@ -39,7 +43,7 @@ public class BasicFileMessageStore implements MessageStore {
 
     private final String DATA_ROOT = "data";
     private final String MESSAGE_EXTENSION = "msg";
-    private final Pattern MESSAGE_FILE_PATTERN = Pattern.compile("(\\d*)\\.(.*)\\." + MESSAGE_EXTENSION);
+    private final Pattern MESSAGE_FILE_PATTERN = Pattern.compile("([\\w-]*)\\.(.*)\\." + MESSAGE_EXTENSION);
 
     private Log log = LogFactory.getLog(BasicFileMessageStore.class);
 
@@ -47,7 +51,7 @@ public class BasicFileMessageStore implements MessageStore {
      * Note that the behavior of this method is inconsistent if the same message
      * id is found twice on the file system with different statuses.
      */
-    public Message getMessage(HealthAddress address, long messageId) throws MessageStoreException {
+    public Message getMessage(HealthAddress address, UUID messageId) throws MessageStoreException {
         String storePath = getStorePath(address);
         File store = new File(storePath);
 
@@ -89,15 +93,17 @@ public class BasicFileMessageStore implements MessageStore {
         Matcher m = MESSAGE_FILE_PATTERN.matcher(file.getName());
         Message message = new Message();
         if (m.matches()) {
-            message.setMessageId(Long.parseLong(m.group(1)));
-            message.setStatus(m.group(2));
-
+            message.setMessageId(UUID.fromString(m.group(1)));
+            message.setStatus(MessageStatus.valueOf(m.group(2).toUpperCase()));
+            message.setTimestamp(new Date(file.lastModified()));
+            
             try {
                 BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
 
                 ByteArrayOutputStream out = new ByteArrayOutputStream();
                 IOUtils.copy(in, out);
                 message.setData(out.toByteArray());
+                in.close();
             } catch (IOException e) {
                 throw new MessageStoreException(e);
             }
@@ -108,10 +114,9 @@ public class BasicFileMessageStore implements MessageStore {
         return message;
     }
 
-    public long putMessage(HealthAddress address, Message message) throws MessageStoreException {
+    public void putMessage(HealthAddress address, Message message) throws MessageStoreException {
         String storePath = getStorePath(address);
-        long messageId = getNextMessageId(storePath);
-        String fileName = getMessageFileName(messageId, message.getStatus());
+        String fileName = getMessageFileName(message.getMessageId(), message.getStatus());
 
         File messageFile = new File(storePath, fileName);
 
@@ -121,7 +126,6 @@ public class BasicFileMessageStore implements MessageStore {
             throw new MessageStoreException(e);
         }
 
-        return messageId;
     }
 
     private void writeMessageToFile(Message message, File messageFile) throws FileNotFoundException, IOException {
@@ -130,7 +134,7 @@ public class BasicFileMessageStore implements MessageStore {
         out.close();
     }
 
-    private String getMessageFileName(long messageId, String status) {
+    private String getMessageFileName(UUID messageId, MessageStatus status) {
         String fileName = messageId + "." + status + "." + MESSAGE_EXTENSION;
         return fileName;
     }
@@ -139,7 +143,7 @@ public class BasicFileMessageStore implements MessageStore {
      * Note that the behavior of this method is inconsistent if the same message
      * id is found twice on the file system with different statuses.
      */
-    public void setMessageStatus(HealthAddress address, long messageId, MessageStatus status)
+    public void setMessageStatus(HealthAddress address, UUID messageId, MessageStatus status)
             throws MessageStoreException {
         String storePath = getStorePath(address);
         File store = new File(storePath);
@@ -158,8 +162,9 @@ public class BasicFileMessageStore implements MessageStore {
 
         if (foundFile != null) {
             File newFileName;
-            newFileName = new File(foundFile.getParent(), getMessageFileName(messageId, status.getStatus()));
-            foundFile.renameTo(newFileName);
+            newFileName = new File(foundFile.getParent(), getMessageFileName(messageId, status));
+            boolean success = foundFile.renameTo(newFileName);
+            if (!success) throw new MessageStoreException("Message Status Update Failed");
         }
     }
 
@@ -174,33 +179,6 @@ public class BasicFileMessageStore implements MessageStore {
         }
 
         return addressDirectory.getAbsolutePath();
-    }
-
-    private long getNextMessageId(String storePath) {
-        File store = new File(storePath);
-        File[] files = store.listFiles();
-
-        long highestId = 0;
-
-        for (File file : files) {
-            Matcher m = MESSAGE_FILE_PATTERN.matcher(file.getName());
-            if (m.matches()) {
-                String tempString = m.group(1);
-
-                long tempId = -1;
-
-                try {
-                    tempId = Long.parseLong(tempString);
-                    if (tempId > highestId) {
-                        highestId = tempId;
-                    }
-                } catch (NumberFormatException e) {
-                    // Ignore unparsable messages
-                }
-            }
-        }
-
-        return highestId + 1;
     }
 
 }
