@@ -6,3 +6,4 @@ syntax: glob
 # Working Rails files
 rails/db/*.sqlite3
 rails/log/*
+rails/tmp/*
