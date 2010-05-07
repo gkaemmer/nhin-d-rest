@@ -118,7 +118,19 @@ class MessagesTest < ActionController::IntegrationTest
      create_message_and_update_status(SAMPLE_MESSAGE, 'UCK')
      assert_response :not_acceptable
    end
-      
+   
+   # Messages Atom feed should by queryable by status
+   def test_query_messages_by_status
+     create_message_and_update_status(SAMPLE_MESSAGE, 'ACK')
+     drj_status_root = @drj_root + '?status='
+     get drj_status_root + 'NEW', nil, {:authorization => @auth, :accept => 'application/atom+xml'}
+     feed = Feedzirra::Feed.parse(response.body)
+     assert_equal feed.entries.length, 2
+     get drj_status_root + 'ACK', nil, {:authorization => @auth, :accept => 'application/atom+xml'}
+     feed = Feedzirra::Feed.parse(response.body)
+     assert_equal feed.entries.length, 1
+   end
+     
 end
 
 SAMPLE_MESSAGE = <<MESSAGE_END
