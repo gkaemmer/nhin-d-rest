@@ -40,6 +40,7 @@ public class NhinDirect10Controller {
     public String getMessages(HttpServletRequest request, 
                               @PathVariable("healthDomain") String healthDomain,
                               @PathVariable("healthEndpoint") String healthEndpoint) throws MessageStoreException {
+         
         
         HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
         List<Message> messages = messageService.getNewMessages(address);

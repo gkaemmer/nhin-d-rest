@@ -1,12 +1,16 @@
+-- Introduction --
+
 This project is a proof of concept implementation of NHIN Direct REST APIs using
-maven, spring 3.0, and embedded jetty. It is not meant to be anything other than
-a demonstration on bootstrapping a Java development environment for use in the  
-NHIN Direct REST Implementation workgroup.
+maven, spring 3.0, spring security 3.0, and embedded jetty. It is not meant to be 
+anything other than a demonstration on bootstrapping a Java development environment 
+for use in the NHIN Direct REST Implementation workgroup.
 
 Building and running this project requires the following software:
 
 JDK 1.5+ (1.6_20 used in development)
 Maven 2.2.x (2.2.1 used in development)
+
+-- Building -- 
 
 To build and run the software first install Java and Maven. Add the {maven_home}/bin 
 directory to your path. Make sure the JAVA_HOME environment variable points to a JDK.
@@ -17,6 +21,21 @@ Execute the following command:
 
 The first execution of maven will take quite a bit of time as all project dependencies 
 are downloaded into your local maven repository.
+
+-- Authentication Note --
+
+The following users are set up in this demo:
+
+drsmith - password: drsmith
+drjones - password: drjones
+
+All HTTP transactions must be authentication. So you're not stuck doing the base64
+encoding here are sample HTTP headers to use for each user:
+
+drsmith - Authorization: Basic ZHJzbWl0aDpkcnNtaXRo
+drjones - Authorization: Basic ZHJqb25lczpkcmpvbmVz 
+
+-- Running the HISP --
 
 Once the project is running, you can try it out with a browser:
 
@@ -33,20 +52,24 @@ http://localhost:8080/nhin/v1/nhin.sunnyfamilypractice.example.org/drsmith/statu
 
 Changing the status of a message is an exercise left to the reader.
 
+-- Working With the Code --
+
 An eclipse project can be generated for the project using the following maven command:
 
 	mvn eclipse:eclipse 
 
 
 TODO:
+	Keep list of authenticated users mapped to health addresses. Perform authorization to restrict access
 	Process correct content type headers for atom feed and other resources, ignored for now
 	Parse submitted messages for from/to addresses
 	Push messages to remote HISP
 	Create a real message store via embedded DB or something less hokey than current file system store
-	Make sure the to/from semantics on the URI are correct 
 
 	DONE Sort atom feed by message date
 	DONE Filter non-new messages from atom feed
+	DONE Authentication/Security - incorporated Spring Security and configured for Bsaic Auth
+
 
 Chris Moyer (MedPlus)
 cmoyer@medplus.com 
