@@ -15,8 +15,7 @@ class MessagesController < ApplicationController
   def index
     # TODO: HISP should see only messages sent by HISP
     status = params[:status] || 'NEW'
-    @messages = Message.find(:all, :include => :status, :conditions => ["to_endpoint = ? AND to_domain = ? AND statuses.status = ?",
-      params[:endpoint], params[:domain], status])
+    @messages = Message.find_by_address_and_status(params[:domain], params[:endpoint], status)
 
     respond_to do |format|
       format.html # index.html.erb

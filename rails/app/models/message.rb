@@ -2,6 +2,11 @@ class Message < ActiveRecord::Base
   attr_readonly :uuid
   has_one :status, :autosave => true
   
+  def self.find_by_address_and_status(domain, endpoint, status)
+    find(:all, :include => :status, :conditions => ["to_domain = ? AND to_endpoint = ? AND statuses.status = ?",
+      domain, endpoint, status])
+  end
+  
   def before_create
     self.uuid = UUIDTools::UUID.random_create.to_s
     self.status = Status.new

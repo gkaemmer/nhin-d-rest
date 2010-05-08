@@ -1,4 +1,5 @@
 ActionController::Routing::Routes.draw do |map|
+  map.resources :domains, :path_prefix => 'admin'
 
   # Need the requirements bit to interpret the domain correctly.
   map.resources :messages, :path_prefix => '/nhin/v1/:domain/:endpoint', :requirements => {:domain => /.*/} do |messages|
