@@ -1,0 +1,30 @@
+From: drsmith@nhin.sunnyfamilypractice.example.org
+To: drjones@nhin.happyvalleypractice.example.org
+Date: Thu, 08 Apr 2010 20:53:17 -0400
+Message-ID: <db00ed94-951b-4d47-8e86-585b31fe01ba@nhin.sunnyfamilypractice.example.org>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="8837833223134.12.9837473322"
+
+This text is traditionally ignored but can
+help non-MIME compliant readers provide
+information.
+--8837833223134.12.9837473322
+Content-Type: text/plain
+
+Attached is a clinical summary from a recent visit for patient John Doe
+located at 123 Main Street, Eagan, MN. John will be scheduling with you for
+follow-up in relation to his complaints of frequent headaches.
+
+--8837833223134.12.9837473322
+Content-Type: application/ccd+xml; name="clinicalsummary-johndoe.xml"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="clinicalsummary-johndoe.xml"
+
+<base64 encoded CCD XML file here>
+--8837833223134.12.9837473322
+Content-Type: application/pdf; name="clinicalsummary-johndoe.pdf"
+Content-Transfer-Encoding: base64
+Content-Disposition: attachment; filename="clinicalsummary-johndoe.pdf"
+
+<base64 encoded PDF here>
+--8837833223134.12.9837473322--

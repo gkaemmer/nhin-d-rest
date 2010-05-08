@@ -1,0 +1,12 @@
+<h1>Editing message</h1>
+
+<% form_for @message, :url => {:domain => params[:domain], :endpoint => params[:endpoint], :action => :update}, :html => {:method => :put} do |f| %>
+  <%= f.error_messages %>
+  <%= f.text_area :raw_message %>
+  <p>
+    <%= f.submit 'Save' %>
+  </p>
+<% end %>
+
+<%= link_to 'Show', message_path (params[:domain], params[:endpoint], @message) %> |
+<%= link_to 'Back', messages_path (params[:domain], params[:endpoint]) %>
