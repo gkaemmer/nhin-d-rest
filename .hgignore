@@ -10,3 +10,4 @@ syntax: glob
 rails/db/*.sqlite3
 rails/log/*
 rails/tmp/*
+rails/vendor/gems/*
