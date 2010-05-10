@@ -152,6 +152,15 @@
 				<configuration>
 					<contextPath>/nhin</contextPath>
 					<scanIntervalSeconds>5</scanIntervalSeconds>
+					<!-- connectors>
+						<connector implementation="org.mortbay.jetty.security.SslSocketConnector">
+							<port>8443</port>
+							<maxIdleTime>60000</maxIdleTime>
+							<keystore>etc/keystore</keystore>
+							<password>password</password>
+							<keyPassword>password</keyPassword>
+						</connector>
+					</connectors-->
 				</configuration>
 			</plugin>
 			<plugin>
