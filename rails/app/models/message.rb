@@ -1,6 +1,7 @@
 class Message < ActiveRecord::Base
   attr_readonly :uuid
   has_one :status, :autosave => true
+  validates_presence_of :raw_message
   
   def self.find_by_address_and_status(domain, endpoint, status)
     find(:all, :include => :status, :conditions => ["to_domain = ? AND to_endpoint = ? AND statuses.status = ?",
@@ -23,8 +24,19 @@ class Message < ActiveRecord::Base
     self.uuid
   end
   
+  def owned_by(address)
+    parsed_message.to.detect { |i| i == address } || parsed_message.from.detect { |i| i == address }
+  end  
+  
   def parsed_message
     @parsed_object ||= Mail.new(self.raw_message)
     @parsed_object
+  end
+  
+  def validate
+    errors.add('to', 'can not be missing') unless parsed_message.to
+    errors.add('from', 'can not be missing') unless parsed_message.from
+    errors.add('date', 'can not be missing') unless parsed_message.date
+    errors.add('message id', 'can not be missing') unless parsed_message.message_id
   end
 end

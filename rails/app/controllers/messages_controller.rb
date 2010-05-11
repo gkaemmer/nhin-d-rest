@@ -1,19 +1,10 @@
 class MessagesController < ApplicationController
   
-  before_filter :authenticate
-  
-  # TODO: Replace hardcoded security with User model
-  USERS = [
-    {:role => :edge, :user => "drjones@nhin.happyvalleypractice.example.org", :pw => "drjones_secret"},
-    {:role => :edge, :user => "drsmith@nhin.sunnyfamilypractice.example.org", :pw => "drsmith_secret"},
-    {:role => :hisp, :user => "hisp", :pw => "supersecret"}
-  ]
-  
   
   # GET /messages
   # GET /messages.xml
   def index
-    # TODO: HISP should see only messages sent by HISP
+    # TODO: should filter by both to and from
     status = params[:status] || 'NEW'
     @messages = Message.find_by_address_and_status(params[:domain], params[:endpoint], status)
 
@@ -26,8 +17,8 @@ class MessagesController < ApplicationController
   # GET /messages/1
   # GET /messages/1.xml
   def show
-    # TODO: for HISP, validate HISP sent this message
     @message = Message.find_by_uuid(params[:id])
+    return unless validate_ownership(@message)
 
     respond_to do |format|
       format.html # show.html.erb
@@ -54,6 +45,7 @@ class MessagesController < ApplicationController
   # POST /messages.xml
   def create
     @message = Message.new(:raw_message => params[:message][:raw_message])
+    return unless validate_ownership(@message)
 
     respond_to do |format|
       if @message.save
@@ -62,7 +54,7 @@ class MessagesController < ApplicationController
         format.rfc822  { head :status => :created, :location => message_path(params[:domain], params[:endpoint], @message) }
       else
         format.html { render :action => "new" }
-        format.rfc822 { head :status => :not_acceptable }
+        format.rfc822 { render :text => @message.errors.full_messages.join('; '), :status => :not_acceptable }
       end
     end
   end
@@ -98,24 +90,5 @@ class MessagesController < ApplicationController
     end
   end
   
-  private
-  def find_by_user(user)
-    USERS.detect {|u| u[:user] == user}
-  end
-  
-  def authenticate
-    authenticate_or_request_with_http_basic do |user_name, password|
-      u = find_by_user(user_name)
-      
-      return false unless u
-      
-      if u[:role] == :edge then
-        endpoint, domain = user_name.split('@')
-        return false unless (endpoint == params[:endpoint] && domain == params[:domain])
-      end
-      
-      u[:user] == user_name && u[:pw] == password
-    end
-  end
   
 end

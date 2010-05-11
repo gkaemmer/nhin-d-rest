@@ -31,7 +31,17 @@ class MessagesTest < ActionController::IntegrationTest
   def test_messages_should_401_when_not_auth    
     get @drj_root
     assert_response :unauthorized
-  end  
+  end 
+  
+  should 'return 401 when viewing a message without authorization' do
+    get @drj_root + "/176b4be7-3e9b-4a2d-85b7-25a1cd089877", nil, {:accept => 'message/rfc822'}
+    assert_response :unauthorized
+  end
+  
+  should 'return 401 when viewing a message status without authorization' do
+    get @drj_root + "/176b4be7-3e9b-4a2d-85b7-25a1cd089877/status", nil, {:accept => 'text/plain'}
+    assert_response :unauthorized
+  end
 
   # The messages resource should return an atom feed if requested with the proper accept header  
   def test_messages_should_return_atom 
@@ -129,6 +139,30 @@ class MessagesTest < ActionController::IntegrationTest
      get drj_status_root + 'ACK', nil, {:authorization => @auth, :accept => 'application/atom+xml'}
      feed = Feedzirra::Feed.parse(response.body)
      assert_equal feed.entries.length, 1
+   end
+   
+   should 'not be able to create message if not the owner' do
+     auth = ActionController::HttpAuthentication::Basic.encode_credentials('strange@stranger.example.org', 'strange_secret')
+     post @drj_root, SAMPLE_MESSAGE, {:authorization => auth, :content_type => 'message/rfc822', :accept => 'message/rfc822'}
+     assert_response :forbidden
+   end
+   
+   should 'not be able to view message if not the owner' do
+     auth = ActionController::HttpAuthentication::Basic.encode_credentials('strange@stranger.example.org', 'strange_secret')
+     post @drj_root, SAMPLE_MESSAGE, {:authorization => @auth, :content_type => 'message/rfc822', :accept => 'message/rfc822'}
+     loc = @response.location
+     get loc, nil, {:authorization => auth, :accept => 'message/rfc822'}
+     assert_response :forbidden
+   end
+   
+   should 'not be able to view or update status if not the owner' do
+     auth = ActionController::HttpAuthentication::Basic.encode_credentials('strange@stranger.example.org', 'strange_secret')
+     post @drj_root, SAMPLE_MESSAGE, {:authorization => @auth, :content_type => 'message/rfc822', :accept => 'message/rfc822'}
+     loc = @response.location
+     get status_uri(loc), nil, {:authorization => auth, :accept => 'text/plain'}
+     assert_response :forbidden
+     put status_uri(loc), 'ACK', {:authorization => auth, :content_type => 'text/plain', :accept => 'text/plain'}
+     assert_response :forbidden
    end
      
 end

@@ -1,6 +1,9 @@
 class StatusesController < ApplicationController
+  skip_before_filter :verify_authenticity_token
+  
   def show
     @status = Status.find_by_message_uuid(params[:message_id])
+    return unless validate_ownership(@status.message)
     
     respond_to do |format|
       format.text { render :text => @status.status }
@@ -9,6 +12,7 @@ class StatusesController < ApplicationController
   
   def update
     @status = Status.find_by_message_uuid(params[:message_id])
+    return unless validate_ownership(@status.message)
     @status.status = request.body.read
     
     respond_to do |format|
