@@ -1,4 +1,6 @@
 class StatusesController < ApplicationController
+  skip_before_filter :verify_authenticity_token
+  
   def show
     @status = Status.find_by_message_uuid(params[:message_id])
     
