@@ -55,6 +55,7 @@ class RemoteHISP
   def message(mid)
     get(message_path(mid), 'message/rfc822')
   end
+  
   def status_path(mid)
     message_path(mid) + '/status'
   end
