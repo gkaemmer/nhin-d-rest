@@ -1,6 +1,7 @@
 class Message < ActiveRecord::Base
   attr_readonly :uuid
   has_one :status, :autosave => true
+  validates_presence_of :raw_message
   
   def self.find_by_address_and_status(domain, endpoint, status)
     find(:all, :include => :status, :conditions => ["to_domain = ? AND to_endpoint = ? AND statuses.status = ?",
