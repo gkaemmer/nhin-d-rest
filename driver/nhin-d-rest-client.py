@@ -19,7 +19,9 @@ parser.add_option("--host", dest="host", help="hostname of nhin-d-rest service")
 parser.add_option("--port", dest="port", help="port of nhin-d-rest service")
 parser.add_option("--user", dest="username", help="username")
 parser.add_option("--pass", dest="password", help="password")
-parser.add_option("--ssl", action="store_true", dest="ssl", default=False, help="enable ssl")
+parser.add_option("--ssl", action="store_true", dest="ssl", default=False, help="enable ssl, one way unless --cert and --key specified")
+parser.add_option("--cert", dest="cert", help="filename containing client cert for 2-way ssl")
+parser.add_option("--key", dest="key", help="filename containing client key for 2-way ssl")
 parser.add_option("-v", "--verbose", action="store_true", dest="verbose", default=False, help="verbose mode")
 (options, args) = parser.parse_args()
 
@@ -52,7 +54,6 @@ if options.username != None:
 if options.password != None:
 	password = options.password
 	
-
 if len(args) < 2:
 	print "ADDRESS and COMMAND required"
 	sys.exit(2)
@@ -118,7 +119,10 @@ def handle_auth(headers):
 
 
 if ssl:	
-	h1 = httplib.HTTPSConnection(host, port)
+	if options.cert != None and options.key != None:
+		h1 = httplib.HTTPSConnection(host, port, options.key, options.cert)	
+	else:
+		h1 = httplib.HTTPSConnection(host, port)	
 else:
 	h1 = httplib.HTTPConnection(host, port)
 
