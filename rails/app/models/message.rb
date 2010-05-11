@@ -3,9 +3,11 @@ class Message < ActiveRecord::Base
   has_one :status, :autosave => true
   validates_presence_of :raw_message
   
-  def self.find_by_address_and_status(domain, endpoint, status)
-    find(:all, :include => :status, :conditions => ["to_domain = ? AND to_endpoint = ? AND statuses.status = ?",
-      domain, endpoint, status])
+  def self.find_by_address_and_status(domain, endpoint, status, current_user)
+    current_user_endpoint, current_user_domain = current_user.split('@')
+    find(:all, :include => :status, :conditions => ["to_domain = ? AND to_endpoint = ? AND statuses.status = ? AND " +
+      " ((to_domain = ? and to_endpoint = ? ) OR (from_domain = ? and from_domain = ?))",
+      domain, endpoint, status, current_user_domain, current_user_endpoint, current_user_domain, current_user_endpoint])
   end
   
   def before_create
@@ -18,6 +20,8 @@ class Message < ActiveRecord::Base
   def before_save
     self.to_domain = Mail::Address.new(self.parsed_message.to[0]).domain if self.parsed_message.to
     self.to_endpoint = Mail::Address.new(self.parsed_message.to[0]).local if self.parsed_message.to
+    self.from_domain = Mail::Address.new(self.parsed_message.from[0]).domain if self.parsed_message.from
+    self.from_endpoint = Mail::Address.new(self.parsed_message.from[0]).local if self.parsed_message.from
   end
   
   def to_param
