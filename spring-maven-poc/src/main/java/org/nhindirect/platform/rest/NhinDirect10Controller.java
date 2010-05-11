@@ -11,7 +11,6 @@ import org.nhindirect.platform.MessageService;
 import org.nhindirect.platform.MessageStatus;
 import org.nhindirect.platform.MessageStoreException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -40,8 +39,7 @@ public class NhinDirect10Controller {
     @ResponseBody
     public String getMessages(HttpServletRequest request, 
                               @PathVariable("healthDomain") String healthDomain,
-                              @PathVariable("healthEndpoint") String healthEndpoint) throws MessageStoreException {
-         
+                              @PathVariable("healthEndpoint") String healthEndpoint) throws MessageStoreException {        
         
         HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
         List<Message> messages = messageService.getNewMessages(address);
@@ -52,7 +50,6 @@ public class NhinDirect10Controller {
     /**
      * Post a message to a specified health address 
      */
-    //@PreAuthorize(value = "ROLE_SENDER")
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public String postMessage(@PathVariable("healthDomain") String healthDomain,

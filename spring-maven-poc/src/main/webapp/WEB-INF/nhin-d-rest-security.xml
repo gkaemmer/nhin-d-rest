@@ -13,8 +13,9 @@
     </global-method-security>
 
     <http auto-config="true" realm="Demo HISP Realm">
-        <intercept-url pattern="/**" access="ROLE_SENDER,ROLE_CONSUMER"/>
-		<http-basic />
+        <intercept-url pattern="/**" access="ROLE_SENDER,ROLE_CONSUMER,ROLE_HISP_SENDER"/>
+        <http-basic/>
+		<x509 user-service-ref="nhinUserDetailsService"/>
     </http>
 
     <authentication-manager>
@@ -26,4 +27,8 @@
         </authentication-provider>
     </authentication-manager>
 
+	<beans:bean id="nhinUserDetailsService" class="org.nhindirect.platform.auth.NhinDirectTrustedUserDetailsService">
+		<beans:property name="assumedRole" value="ROLE_HISP_SENDER"/>
+	</beans:bean>
+	
 </beans:beans>
