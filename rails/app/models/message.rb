@@ -24,6 +24,10 @@ class Message < ActiveRecord::Base
     self.uuid
   end
   
+  def owned_by(address)
+    parsed_message.to.detect { |i| i == address } || parsed_message.from.detect { |i| i == address }
+  end  
+  
   def parsed_message
     @parsed_object ||= Mail.new(self.raw_message)
     @parsed_object
