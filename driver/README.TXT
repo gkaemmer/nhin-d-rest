@@ -4,7 +4,7 @@
 
 During development of the REST prototype it quickly became painful to use a browser or other HTTP 
 tool to exercise the API that we're building. This tool scratches an itch I had to be able to quickly invoke
-the API with a variety of connectivity options. The code is hacked together quickly and is non-idiomatic, I am not a python expert.
+the API with a variety of connectivity options. 
 
 == Usage == 
 
@@ -16,7 +16,9 @@ Options:
   --port=PORT      port of nhin-d-rest service
   --user=USERNAME  username
   --pass=PASSWORD  password
-  --ssl            enable ssl
+  --ssl            enable ssl, one way unless --cert and --key specified
+  --cert=CERT      filename containing client cert for 2-way ssl
+  --key=KEY        filename containing client key for 2-way ssl
   -v, --verbose    verbose mode
 
 
@@ -44,12 +46,8 @@ python nhin-d-rest-client.py --host localhost --port 8080 --user drsmith --pass 
 
 == SSL ==
 
-SSL support is enabled by setting the right port and using the --ssl command line option. Server certs are not validated.
-  
- 
-== TODO ==
+SSL support is enabled by setting the right port and using the --ssl command line option. Server certs are not validated. To use a client side cert specify the certificate and private key files with --cert and --key. User will be prompted for private key password.
 
-Working on enabling client side certs for testing of trust models on the server. 
   
   
   
