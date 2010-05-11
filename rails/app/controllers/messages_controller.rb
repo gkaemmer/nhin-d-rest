@@ -62,7 +62,7 @@ class MessagesController < ApplicationController
         format.rfc822  { head :status => :created, :location => message_path(params[:domain], params[:endpoint], @message) }
       else
         format.html { render :action => "new" }
-        format.rfc822 { head :status => :not_acceptable }
+        format.rfc822 { render :text => @message.errors.full_messages.join('; '), :status => :not_acceptable }
       end
     end
   end
