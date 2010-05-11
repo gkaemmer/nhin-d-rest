@@ -9,7 +9,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20100507225408) do
+ActiveRecord::Schema.define(:version => 20100511201622) do
 
   create_table "domains", :force => true do |t|
     t.string   "domain"
@@ -19,12 +19,14 @@ ActiveRecord::Schema.define(:version => 20100507225408) do
   end
 
   create_table "messages", :force => true do |t|
-    t.string   "uuid",        :null => false
+    t.string   "uuid",          :null => false
     t.string   "to_domain"
     t.string   "to_endpoint"
     t.text     "raw_message"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "from_domain"
+    t.string   "from_endpoint"
   end
 
   add_index "messages", ["to_domain"], :name => "index_messages_on_to_domain"
