@@ -5,30 +5,27 @@ class MessagesTest < ActionController::IntegrationTest
   
   def setup
     @auth = ActionController::HttpAuthentication::Basic.encode_credentials('drjones@nhin.happyvalleypractice.example.org', 'drjones_secret')
+    @strange_auth = ActionController::HttpAuthentication::Basic.encode_credentials('strange@stranger.example.org', 'strange_secret')
     @drj_root = '/nhin/v1/nhin.happyvalleypractice.example.org/drjones/messages'
   end
   
-  # There should be a messages resource corresponding to the requirements in the specification
-  def test_should_route_to_index
+ should 'be able to route to the messages resource' do
     assert_routing @drj_root, {:controller => 'messages', :action => 'index', :domain => 'nhin.happyvalleypractice.example.org', :endpoint => 'drjones'}
   end
   
-  # There should be a message resource corresponding to the requirements in the specification
-  def test_should_route_to_message
+  should 'be able to route to the message resource for a specific message id' do 
     assert_routing @drj_root + "/176b4be7-3e9b-4a2d-85b7-25a1cd089877",
       {:controller => 'messages', :action => 'show', :domain => 'nhin.happyvalleypractice.example.org',
        :endpoint => 'drjones', :id => '176b4be7-3e9b-4a2d-85b7-25a1cd089877'}
   end
   
-  # There should be a message status resource corresponding to the requirements in the specification
-  def test_should_route_to_message_status
+  should 'be able to route to the status resource for a specific message id' do
     assert_routing @drj_root + "/176b4be7-3e9b-4a2d-85b7-25a1cd089877/status",
       {:controller => 'statuses', :action => 'show', :domain => 'nhin.happyvalleypractice.example.org',
        :endpoint => 'drjones', :message_id => '176b4be7-3e9b-4a2d-85b7-25a1cd089877'}
   end
   
-  # NHIN-D resources should require authorization
-  def test_messages_should_401_when_not_auth    
+  should 'return 401 when viewing messages without authorization' do
     get @drj_root
     assert_response :unauthorized
   end 
@@ -43,15 +40,13 @@ class MessagesTest < ActionController::IntegrationTest
     assert_response :unauthorized
   end
 
-  # The messages resource should return an atom feed if requested with the proper accept header  
-  def test_messages_should_return_atom 
+  should 'have an Atom representation of the messages resource' do
     get @drj_root, nil, {:authorization => @auth, :accept => 'application/atom+xml'}
     assert_response :success
     assert_equal response.content_type, "application/atom+xml"
   end
   
-  # The messages resource Atom feed entries should contain links to the individual message resources
-  def test_atom_feed_includes_url_to_message
+  should 'have an Atom representation of the messages resource with links to the individual message URIs' do
     auth = ActionController::HttpAuthentication::Basic.encode_credentials('drjones@nhin.happyvalleypractice.example.org', 'drjones_secret')
     get @drj_root ,nil, {:authorization => @auth, :accept => 'application/atom+xml'}
     feed = Feedzirra::Feed.parse(response.body)
@@ -59,23 +54,20 @@ class MessagesTest < ActionController::IntegrationTest
     assert_equal URI::split(entry.url)[5], @drj_root + '/176b4be7-3e9b-4a2d-85b7-25a1cd089877'
   end
   
-  # The messages atom feed should only display messages sent to
-  # the logged in user
-  def test_atom_feed_has_two_entries
-     get @drj_root, nil, {:authorization => @auth, :accept => 'application/atom+xml'}
+  should 'have an Atom represetentation of the messages resource with two entries for the specified test data' do
+    get @drj_root, nil, {:authorization => @auth, :accept => 'application/atom+xml'}
+    feed = Feedzirra::Feed.parse(response.body)
+    assert_equal feed.entries.length, 2
+  end
+   
+   should 'have an Atom representation of the messages resource with zero entries for an authenticated user with no access to the messages' do
+     get @drj_root, nil, {:authorization => @strange_auth, :accept => 'application/atom+xml'}
      feed = Feedzirra::Feed.parse(response.body)
-     assert_equal feed.entries.length, 2
+     assert_equal feed.entries.length, 0   
    end
    
-   # Should be able to create a message by POSTing to the messages resource with the following conditions:
-   # * Authenticated
-   # * POST is in valid message/rfc822 format
-   # * Message contains to header
-   # * Content-Type is message/rfc822
-   # TODO: remove this * Accepts: is message/rfc822
-   # * The response return status code 200, and contains a reference to the newly created message
-   # * The newly created message is idetical to the message we POSTed
-   def test_create_and_retrieve_message
+   should 'be able to POST a new message at the messages resource and retrieve the resulting message resource' do
+     # TODO: remove this * Accepts: is message/rfc822
      post @drj_root, SAMPLE_MESSAGE, {:authorization => @auth, :content_type => 'message/rfc822', :accept => 'message/rfc822'}
      assert_response :created
      assert_equal @response.content_type, 'message/rfc822' 
@@ -93,17 +85,14 @@ class MessagesTest < ActionController::IntegrationTest
      return message_uri + '/status'
    end
    
-   # A message should be created with initial status of NEW
-   def test_initial_message_status
+   should 'have status NEW upon message creation' do
      loc = create_message(SAMPLE_MESSAGE)
      get status_uri(loc), nil, {:authorization => @auth, :accept => 'text/plain'}
      assert_response :success
      assert_equal 'NEW', @response.body
    end
    
-   
-   # A message may be updated to status ACK
-   def test_update_message_status_ack
+   should 'be able to update message status to ACK' do
      loc = create_message(SAMPLE_MESSAGE)
      put status_uri(loc), 'ACK', {:authorization => @auth, :content_type => 'text/plain', :accept => 'text/plain'}
      assert_response :success
@@ -114,23 +103,21 @@ class MessagesTest < ActionController::IntegrationTest
    def create_message_and_update_status(message, status)
      loc = create_message(SAMPLE_MESSAGE)
      put status_uri(loc), status, {:authorization => @auth, :content_type => 'text/plain', :accept => 'text/plain'}
+     return loc
    end
    
-   # A message may be updated to status NACK
-   def test_update_message_status_nack
-     create_message_and_update_status(SAMPLE_MESSAGE, 'NACK')
+   should 'be able to update message status to NACK' do
+     loc = create_message_and_update_status(SAMPLE_MESSAGE, 'NACK')
      get status_uri(loc), nil, {:authorization => @auth, :accept => 'text/plain'}
      assert_equal 'NACK', @response.body
    end
    
-   # A message may not be updated to an invalid status
-   def test_update_message_status_nack
+   should 'not be able to update message status to an invalid status' do
      create_message_and_update_status(SAMPLE_MESSAGE, 'UCK')
      assert_response :not_acceptable
    end
    
-   # Messages Atom feed should by queryable by status
-   def test_query_messages_by_status
+   should 'be able to query messages by status' do
      create_message_and_update_status(SAMPLE_MESSAGE, 'ACK')
      drj_status_root = @drj_root + '?status='
      get drj_status_root + 'NEW', nil, {:authorization => @auth, :accept => 'application/atom+xml'}
@@ -148,20 +135,18 @@ class MessagesTest < ActionController::IntegrationTest
    end
    
    should 'not be able to view message if not the owner' do
-     auth = ActionController::HttpAuthentication::Basic.encode_credentials('strange@stranger.example.org', 'strange_secret')
      post @drj_root, SAMPLE_MESSAGE, {:authorization => @auth, :content_type => 'message/rfc822', :accept => 'message/rfc822'}
      loc = @response.location
-     get loc, nil, {:authorization => auth, :accept => 'message/rfc822'}
+     get loc, nil, {:authorization => @strange_auth, :accept => 'message/rfc822'}
      assert_response :forbidden
    end
    
    should 'not be able to view or update status if not the owner' do
-     auth = ActionController::HttpAuthentication::Basic.encode_credentials('strange@stranger.example.org', 'strange_secret')
      post @drj_root, SAMPLE_MESSAGE, {:authorization => @auth, :content_type => 'message/rfc822', :accept => 'message/rfc822'}
      loc = @response.location
-     get status_uri(loc), nil, {:authorization => auth, :accept => 'text/plain'}
+     get status_uri(loc), nil, {:authorization => @strange_auth, :accept => 'text/plain'}
      assert_response :forbidden
-     put status_uri(loc), 'ACK', {:authorization => auth, :content_type => 'text/plain', :accept => 'text/plain'}
+     put status_uri(loc), 'ACK', {:authorization => @strange_auth, :content_type => 'text/plain', :accept => 'text/plain'}
      assert_response :forbidden
    end
      
