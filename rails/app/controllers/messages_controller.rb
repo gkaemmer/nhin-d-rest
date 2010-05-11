@@ -6,7 +6,7 @@ class MessagesController < ApplicationController
   def index
     # TODO: should filter by both to and from
     status = params[:status] || 'NEW'
-    @messages = Message.find_by_address_and_status(params[:domain], params[:endpoint], status)
+    @messages = Message.find_by_address_and_status(params[:domain], params[:endpoint], status, @current_user)
 
     respond_to do |format|
       format.html # index.html.erb
