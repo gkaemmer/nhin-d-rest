@@ -3,7 +3,6 @@ package org.nhindirect.platform;
 import java.util.List;
 import java.util.UUID;
 
-
 public interface MessageService {
 
     public List<Message> getNewMessages(HealthAddress address) throws MessageStoreException;

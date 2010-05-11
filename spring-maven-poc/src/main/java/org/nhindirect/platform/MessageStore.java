@@ -3,7 +3,6 @@ package org.nhindirect.platform;
 import java.util.List;
 import java.util.UUID;
 
-
 /**
  * MessageStore interface. This interface defines the bare minimum functionality 
  * needed to store messages in an NHIN Direct REST system. 
