@@ -1,0 +1,7 @@
+To: <%=h @message.to_endpoint %>@<%=h @message.to_domain %>
+<p/>
+Raw message text:
+<p/>
+<pre><%=h @message.raw_message %></pre>
+<%= link_to 'Edit', edit_message_path(params[:domain], params[:endpoint], @message) %> |
+<%= link_to 'Back', messages_path(params[:domain], params[:endpoint]) %>
