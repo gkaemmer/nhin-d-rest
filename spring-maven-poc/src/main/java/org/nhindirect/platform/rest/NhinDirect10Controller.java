@@ -8,9 +8,12 @@ import javax.servlet.http.HttpServletRequest;
 import org.nhindirect.platform.HealthAddress;
 import org.nhindirect.platform.Message;
 import org.nhindirect.platform.MessageService;
+import org.nhindirect.platform.MessageServiceException;
 import org.nhindirect.platform.MessageStatus;
 import org.nhindirect.platform.MessageStoreException;
+import org.nhindirect.platform.basic.AbstractUserAwareClass;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,59 +22,67 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * Controller for NHIN Direct REST API as defined here: http://nhindirect.org/REST+Implementation
+ * Controller for NHIN Direct REST API as defined here:
+ * http://nhindirect.org/REST+Implementation
  * 
- * This is not intended as a secure, reliable, or complete implementation. It's intended
- * as a proof of concept on using Spring MVC 3.0 for the REST implementation.
- *
+ * This is not intended as a secure, reliable, or complete implementation. It's
+ * intended as a proof of concept on using Spring MVC 3.0 for the REST
+ * implementation.
+ * 
+ * I was planning on using the @PreAuthorize annotation for declaritive security
+ * but I can't seem to get it working, so I've replaced it with some custom code
+ * to check roles.
+ * 
  */
 @Controller
 @RequestMapping("/v1/{healthDomain}/{healthEndpoint}/messages")
-public class NhinDirect10Controller {
+public class NhinDirect10Controller extends AbstractUserAwareClass {
 
     @Autowired
     protected MessageService messageService;
 
-    /** 
+    /**
      * Get messages addressed to a specified health address.
      */
+    @PreAuthorize("hasRole('ROLE_EDGE')")
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
-    public String getMessages(HttpServletRequest request, 
-                              @PathVariable("healthDomain") String healthDomain,
-                              @PathVariable("healthEndpoint") String healthEndpoint) throws MessageStoreException {        
-        
+    public String getMessages(HttpServletRequest request, @PathVariable("healthDomain") String healthDomain,
+                              @PathVariable("healthEndpoint") String healthEndpoint) throws MessageStoreException,
+            MessageServiceException {
+
         HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
         List<Message> messages = messageService.getNewMessages(address);
-        
+
         return AtomPublisher.createFeed(request.getRequestURL().toString(), address, messages);
     }
 
     /**
-     * Post a message to a specified health address 
+     * Post a message to a specified health address
      */
+    @PreAuthorize("hasRole('ROLE_EDGE') or hasRole('ROLE_HISP')")
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
     public String postMessage(@PathVariable("healthDomain") String healthDomain,
-                              @PathVariable("healthEndpoint") String healthEndpoint,
-                              @RequestBody String rawMessage)
-            throws MessageStoreException {
+                              @PathVariable("healthEndpoint") String healthEndpoint, @RequestBody String rawMessage)
+            throws MessageStoreException, MessageServiceException {
 
         HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
-        Message message = messageService.createMessage(address, rawMessage);
+        Message message = messageService.handleMessage(address, rawMessage);
 
         return message.getMessageId().toString();
     }
-    
+
     /**
-     * Get a specific message that was sent to the specified health address 
+     * Get a specific message that was sent to the specified health address
      */
+    @PreAuthorize("hasRole('ROLE_EDGE')")
     @RequestMapping(value = "/{messageId}", method = RequestMethod.GET)
     @ResponseBody
     public String getMessage(@PathVariable("healthDomain") String healthDomain,
-                             @PathVariable("healthEndpoint") String healthEndpoint, 
-                             @PathVariable("messageId") String messageId)
-            throws MessageStoreException {
+                             @PathVariable("healthEndpoint") String healthEndpoint,
+                             @PathVariable("messageId") String messageId) throws MessageStoreException,
+            MessageServiceException {
 
         HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
         Message message = messageService.getMessage(address, UUID.fromString(messageId));
@@ -80,14 +91,15 @@ public class NhinDirect10Controller {
     }
 
     /**
-     * Get the status of a specific message sent to the specified health address   
+     * Get the status of a specific message sent to the specified health address
      */
+    @PreAuthorize("hasRole('ROLE_EDGE')")
     @RequestMapping(value = "/{messageId}/status", method = RequestMethod.GET)
     @ResponseBody
     public String getMessageStatus(@PathVariable("healthDomain") String healthDomain,
                                    @PathVariable("healthEndpoint") String healthEndpoint,
-                                   @PathVariable("messageId") String messageId)
-            throws MessageStoreException {
+                                   @PathVariable("messageId") String messageId) throws MessageStoreException,
+            MessageServiceException {
 
         HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
         Message message = messageService.getMessage(address, UUID.fromString(messageId));
@@ -98,17 +110,20 @@ public class NhinDirect10Controller {
     /**
      * Set the status of a specific message sent to the specified health address
      */
+    @PreAuthorize("hasRole('ROLE_EDGE')")
     @RequestMapping(value = "/{messageId}/status", method = RequestMethod.PUT)
     @ResponseBody
     public String setMessageStatus(@PathVariable("healthDomain") String healthDomain,
                                    @PathVariable("healthEndpoint") String healthEndpoint,
-                                   @PathVariable("messageId") String messageId, 
-                                   @RequestBody String status)
-            throws NumberFormatException, MessageStoreException {
+                                   @PathVariable("messageId") String messageId, @RequestBody String status)
+            throws NumberFormatException, MessageStoreException, MessageServiceException {
 
         HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
-        messageService.setMessageStatus(address, UUID.fromString(messageId), MessageStatus.valueOf(status.toUpperCase()));
-        
-        return "message status updated to " + status + " for message id " + messageId + " for address " + address.toEmailAddress();
+        messageService.setMessageStatus(address, UUID.fromString(messageId), MessageStatus
+                .valueOf(status.toUpperCase()));
+
+        return "message status updated to " + status + " for message id " + messageId + " for address "
+                + address.toEmailAddress();
     }
+
 }

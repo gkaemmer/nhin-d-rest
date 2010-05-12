@@ -42,7 +42,7 @@ import org.nhindirect.platform.MessageStoreException;
 public class BasicFileMessageStore implements MessageStore {
 
     private final String DATA_ROOT = "data";
-    private final String MESSAGE_EXTENSION = "msg";
+    private final String MESSAGE_EXTENSION = "txt";
     private final Pattern MESSAGE_FILE_PATTERN = Pattern.compile("([\\w-]*)\\.(.*)\\." + MESSAGE_EXTENSION);
 
     private Log log = LogFactory.getLog(BasicFileMessageStore.class);
@@ -107,6 +107,8 @@ public class BasicFileMessageStore implements MessageStore {
             } catch (IOException e) {
                 throw new MessageStoreException(e);
             }
+            
+            message.parseMetaData();
         } else {
             throw new MessageStoreException("Message not found.");
         }

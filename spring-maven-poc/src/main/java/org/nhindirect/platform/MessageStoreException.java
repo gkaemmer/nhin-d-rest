@@ -1,12 +1,10 @@
 package org.nhindirect.platform;
 
-import java.io.IOException;
-
 public class MessageStoreException extends Exception {
 
     private static final long serialVersionUID = 1L;
 
-    public MessageStoreException(IOException e) {
+    public MessageStoreException(Exception e) {
         super(e);
     }
 

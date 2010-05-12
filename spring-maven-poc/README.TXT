@@ -5,7 +5,7 @@ maven, spring 3.0, spring security 3.0, and embedded jetty.
 
 Building and running this project requires the following software:
 
-JDK 1.5+ (1.6_20 used in development)
+JDK 1.6+ (1.6_20 used in development)
 Maven 2.2.x (2.2.1 used in development)
 
 
@@ -44,29 +44,121 @@ section. HTTP will be enabled on port 8080.
 === Keystore/Truststore ===
 
 The key and certificate for the server are stored in etc/keystore. This keystore has 
-a password of 'password'. The server key has been signed by a demo CA. 
+a password of 'password'. The server key has been signed by a demo CA and is for 
+"nhin.sunnyfamilypractice.example.org". There are two keystores in the etc/stores 
+directory, one for nhin.sunnyfamilypractice.example.org and one for 
+nhin.happyvalleypractice.example.org. Replace etc/keystore with either of these files
+to swap out the server cert. 
 
 The truststore contains a list of certificates or signing certificates for any
 client that we trust to be a HISP. The truststore file in the repository contains
 the demo CA certificate. 
 
+The /driver/keys directory contains two key/cert combinations that have been signed by
+the cert in the default truststore. These are appropriate for use by client software.
 
-== Authentication Notes ==
 
-You can authenticate to the server either with a client certificate signed by a cert in
-our truststore or with a certificate contained in the truststore itself. User principal
-for x509 authenticated users will be the CN value from the cert. All x509 authenticated
-users get the ROLE_HISP_SENDER role and are assumed to be HISPs.
+== Authentication & Authorization Notes ==
 
-Basic authentication is provided for edge senders. 
+There are two methods for authenticating:
 
-The following users are set up in this demo:
+* HTTP Basic Authentication
+* Client Cert Authentication
 
-drsmith - password: drsmith
-drjones - password: drjones
+The SSL server will ask for a client cert. If it's provided, then Client Cert Authentication
+takes place. If a client cert is not provided, HTTP Basic Authentication takes place.
 
-The nhin-d-rest-client project contains a sample certificate that can be used to call
-as a HISP.
+=== Basic Authentication ===
+
+Basic authentication is driven off the /src/main/webapp/WEB-INF/nhin-d-rest-security.xml file. 
+
+Each user is specified along with their password and roles. There are two supported roles, 
+ROLE_EDGE and ROLE_HISP. 
+
+    <authentication-manager>
+        <authentication-provider>
+            <user-service>
+                <user name="drsmith" password="drsmith" authorities="ROLE_EDGE"/>                
+                <user name="drmalec" password="drmalec" authorities="ROLE_EDGE"/>
+                <user name="drmoyer" password="drmoyer" authorities="ROLE_EDGE"/>
+                <user name="sunnydocs" password="sunnydocs" authorities="ROLE_EDGE"/>                
+                <user name="nhin.healthypractice.example.org" authorities="ROLE_HISP"/>
+            </user-service>
+        </authentication-provider>
+    </authentication-manager>
+
+=== Roles ===    
+    
+A user with the ROLE_EDGE role will be considered an edge user. The user will be able to access 
+the entire REST API but his POST /messages logic will be appropriate for an EDGE user.
+
+A user with the ROLE_HISP role will be considered a HISP user. The user will only be able to 
+access the POST /messages resource. Message processing logic will follow the remote HISP model  
+and the username must match the domain of healthcare addresses for messages sent by this user.  
+
+=== Client Cert Authentication ===
+
+Any client cert that is either in our truststore or signed by a cert in our truststore will 
+be accepted. The CN in the cert will be the username of the caller. This user will implicitly 
+be given the ROLE_HISP role. These users are not required to be specified in the 
+nhin-d-rest-security.xml file. 
+
+
+== Domain Configuration ==
+
+Health domains and endpoints are configured in a single properties file: /etc/domain.properties
+
+The format looks like this:
+
+	<healthaddress>: user1, user2, user3
+
+For example:
+
+	drsmith@nhin.sunnyfamilypractice.example.org: drsmith,
+	drmalec@nhin.sunnyfamilypractice.example.org: drmalec,sunnydocs
+	drmoyer@nhin.sunnyfamilypractice.example.org: drmoyer,sunnydocs 
+
+Note that a user can access and operate on behalf of multiple addresses and an address can
+be accessed by multiple users. It's possible for multiple domains to be configured on a
+single server.
+
+This domain/endpoint registry is used for validation when messages are posted to the HISP, 
+either from an edge user or a remote HISP. Any changes requires a restart of the server.
+
+
+== Security ==
+
+Each resource is protected with the following logic:
+
+=== /messages GET ===
+
+* User must have ROLE_EDGE. User must be provisioned to address specified in URI.
+ 
+=== /messages POST ===
+
+* User must have ROLE_EDGE or ROLE_HISP. 
+
+For edge user: 'From' address must be provisioned to user. 'To' address in URI must 
+match 'To' address in message. Local 'To' addresses are stored on HISP, remote 'To' 
+addresses forwarded to remote HISP.
+
+For HISP user: 'To' address must be valid local HISP address. HISP user name must
+match domain in 'From' address.
+
+=== /messages/<ID> GET ===
+
+* User must have ROLE_EDGE. 
+* User must be provisioned to address specified in URI.
+
+=== /messages/<ID>/status GET ===
+
+* User must have ROLE_EDGE. 
+* User must be provisioned to address specified in URI.
+
+=== /messages/<ID>/status PUT ===
+
+* User must have ROLE_EDGE. 
+* User must be provisioned to address specified in URI.
 
 
 == Running the HISP ==
@@ -75,16 +167,9 @@ Once the project is running, you can try it out with a browser:
 
 https://localhost:8443/nhin/v1/nhin.sunnyfamilypractice.example.org/drsmith/messages
 
-You can't access the more interesting APIs unless you first post messages to the server. To
-do this, either perform an HTTP POST to the same URL or unzip the included data.zip file.
+You can't access the more interesting APIs unless you first post messages to the server.
 
-Once the data has been submitted (or extracted) to the server you can perform the following
-operations:
-
-https://localhost:8443/nhin/v1/nhin.sunnyfamilypractice.example.org/drsmith/message/466af1ff-f27c-444c-ab49-466611d9d9a9
-https://localhost:8443/nhin/v1/nhin.sunnyfamilypractice.example.org/drsmith/status/466af1ff-f27c-444c-ab49-466611d9d9a9
-
-The nhin-d-rest-client project contains a command line application that can be used
+The /driver/nhin-d-rest-client project contains a command line application that can be used
 to exercise the API as either an edge or HISP.
 
 
@@ -97,13 +182,12 @@ An eclipse project can be generated for the project using the following maven co
 
 == TODO: ==
 
-	Keep list of authenticated users mapped to health addresses. Perform authorization to restrict access
-	Process correct content type headers for atom feed and other resources, ignored for now
-	Parse submitted messages for from/to addresses
 	Push messages to remote HISP
+	Turn validation exceptions into something better than an HTML encoded 500 message with a stack trace	
+	Process correct content type headers for atom feed and other resources, ignored for now
+	Use the 'V' in Spring MVC
 	Create a real message store via embedded DB or something less hokey than current file system store
-
-
+	
 
 Chris Moyer (MedPlus)
 cmoyer@medplus.com 
