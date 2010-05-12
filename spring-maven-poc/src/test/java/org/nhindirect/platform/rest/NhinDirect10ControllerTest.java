@@ -97,7 +97,7 @@ public class NhinDirect10ControllerTest {
 		Message message = new Message();
 		message.setMessageId(id);
 		
-		when(messageService.createMessage(any(HealthAddress.class), anyString())).thenReturn(message);
+		when(messageService.handleMessage(any(HealthAddress.class), anyString())).thenReturn(message);
 		String response = controller.postMessage("domain", "endpoint", "some message");
 		
 		assertNotNull(response);
