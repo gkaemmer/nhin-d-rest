@@ -1,16 +1,18 @@
-Caveats: I haven't fully integration tested this
 TODO.txt for a rough plan for what needs to be done here.
 
 ==Installation==
 
-I run this off my OS X laptop, so this should run on a Snow Leopard machine.
-
-I have yet to pull onto bare metal Linux or Windows -- let me know.
-
 ===Prerequisites==
+
 
 Ruby with Gem support
 Sqlite3
+
+On OS X with Snow Leopard and developer packages, everything builds as is.
+
+On Linux, to build gems, you need devel packages for:
+
+sqlite3, curl, libxml2, libxslt
 
 
 ===Installation tasks===
@@ -18,6 +20,7 @@ gem install rails mongrel
 
 cd nhin-d-rest/rails
 rake gems:install
+rake gems:install RAILS_ENV=test
 script/server -d
 rake db:migrate
 rake db:test:load
@@ -25,4 +28,7 @@ rake test:integration
 
 =Overview=
 
-All the juicy bits are in routes.rb, messages_controller.rb and messages.rb
+All the juicy bits are in routes.rb, messages_controller.rb, statuses_controller.rb, statuses.rb, and messages.rb
+Security code is in application_controller.rb
+
+Full integration tests in test/integration/messages_test.rb
