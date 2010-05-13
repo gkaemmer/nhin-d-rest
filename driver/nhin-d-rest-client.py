@@ -36,7 +36,7 @@ status = ''
 filename = ''
 
 host = 'localhost'
-port = '8080'
+port = 8080
 username = None
 password = None
 ssl = options.ssl
@@ -46,7 +46,7 @@ if options.host != None:
 	host = options.host
 
 if options.port != None:
-	port = options.port
+	port = int(options.port)
 
 if options.username != None:
 	username = options.username
