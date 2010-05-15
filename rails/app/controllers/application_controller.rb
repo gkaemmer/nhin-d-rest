@@ -34,9 +34,13 @@ class ApplicationController < ActionController::Base
   def authenticate
     authenticate_or_request_with_http_basic do |user_name, password|
       @current_user = user_name
-      u = find_by_user(user_name)
-      return false unless u
-      u[:user] == user_name && u[:pw] == password
+      if request.env['HTTP_SSL_CLIENT_VERIFY'] == 'SUCCESS' then # Client cert verified, don't need to check password
+        return true 
+      else
+        u = find_by_user(user_name)
+        return false unless u
+        u[:user] == user_name && u[:pw] == password
+      end
     end
   end
   
