@@ -4,44 +4,64 @@
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
+  helper_method :current_user_session, :current_user
 
-  # Scrub sensitive parameters from your log
-  # filter_parameter_logging :password
+  #filter_parameter_logging :password, :password_confirmation
   
-  before_filter :authenticate
-  
-  # TODO: Replace hardcoded security with User model
-  USERS = [
-    {:user => "drjones@nhin.happyvalleypractice.example.org", :pw => "drjones_secret"},
-    {:user => "drsmith@nhin.sunnyfamilypractice.example.org", :pw => "drsmith_secret"},
-    {:user => 'strange@stranger.example.org', :pw => 'strange_secret'} # For testing ownership
-  ]
   
   private
   
   def validate_ownership(message)
-    if !message.owned_by(@current_user) then
+    address = current_user && current_user.login
+    if !message.owned_by(address) then
       head :status => :forbidden
       return false
     end
     return true
   end
   
-  def find_by_user(user)
-    USERS.detect {|u| u[:user] == user}
+  def current_user_session
+    return @current_user_session if defined?(@current_user_session)
+    @current_user_session = UserSession.find
   end
   
-  def authenticate
-    authenticate_or_request_with_http_basic do |user_name, password|
-      @current_user = user_name
-      if request.env['HTTP_SSL_CLIENT_VERIFY'] == 'SUCCESS' then # Client cert verified, don't need to check password
-        return true 
-      else
-        u = find_by_user(user_name)
-        return false unless u
-        u[:user] == user_name && u[:pw] == password
+  def current_user
+    return @current_user if defined?(@current_user)
+    @current_user = current_user_session && current_user_session.record
+  end
+  
+  def redirect_user
+    store_location
+    flash[:notice] = "You must be logged in to access this page"
+    redirect_to new_user_session_url
+    return false
+  end
+  
+  def require_user
+    unless current_user
+      respond_to do |format|
+        format.html { redirect_user }
+        format.all { head :status => :unauthorized }
       end
     end
+  end
+
+  def require_no_user
+    if current_user
+      store_location
+      flash[:notice] = "You must be logged out to access this page"
+      redirect_to account_url
+      return false
+    end
+  end
+  
+  def store_location
+    session[:return_to] = request.request_uri
+  end
+  
+  def redirect_back_or_default(default)
+    redirect_to(session[:return_to] || default)
+    session[:return_to] = nil
   end
   
 end

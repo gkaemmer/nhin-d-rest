@@ -1,12 +1,12 @@
 class MessagesController < ApplicationController
-  
+  before_filter :require_user  
   
   # GET /messages
   # GET /messages.xml
   def index
-    # TODO: should filter by both to and from
     status = params[:status] || 'NEW'
-    @messages = Message.find_by_address_and_status(params[:domain], params[:endpoint], status, @current_user)
+    address = current_user && current_user.login
+    @messages = Message.find_by_address_and_status(params[:domain], params[:endpoint], status, address)
 
     respond_to do |format|
       format.html # index.html.erb
