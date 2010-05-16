@@ -26,6 +26,12 @@ rake db:migrate
 rake db:test:load
 rake test:integration
 
+Application comes with interactive user forms as well as API approach.
+
+To use the interactive app, you'll need to create some users at:
+
+http://localhost:3000/users/new
+
 ===NGINX Configuration===
 
 The client certificate security model was tested with nginx. The particular SSL configuration used (in addition to the standard nginx SSL and proxy configurations) was (in the listen directive):
