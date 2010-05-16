@@ -43,7 +43,7 @@ ssl_verify_client	    on;
 Note that the session cache is required due to an nginx bug with no session cache.
 
 In the location directive:
-proxy_set_header  SSL_CLIENT_CERT   $ssl_client_cert;
+proxy_set_header  SSL_CLIENT_VERIFY   $ssl_client_verify;
 
 =Overview=
 
@@ -54,6 +54,6 @@ Full integration tests in test/integration/messages_test.rb
 
 ==Security Model==
 
-Basic authorization is used in all cases. If the client certificate check performed by the web server is successful, as signaled by the presence of an HTTP_SSL_CLIENT_VERIFY environment variable, the authorization uses the supplied user name without checking the password. If the check is not performed, or fails, the authorization checks the password.
+Basic authorization is used in all cases. If the client certificate check performed by the web server is successful, as signaled by the presence of an HTTP_SSL_CLIENT_VERIFY environment variable that equal SUCCESS, the authorization uses the supplied user name without checking the password. If the check is not performed, or fails, the authorization checks the password.
 
 The HTTP_SSL_CLIENT_VERIFY environment variable seems to be a standard Apache variable, and can be set in nginx with the configuration described above. This has not been tested in any other configuration besides nginx.
