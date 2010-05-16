@@ -1,12 +1,14 @@
 require 'test_helper'
+require 'authlogic/test_case'
 
 class MessagesTest < ActionController::IntegrationTest
-  fixtures :messages
+  fixtures :all
   
   def setup
     @auth = ActionController::HttpAuthentication::Basic.encode_credentials('drjones@nhin.happyvalleypractice.example.org', 'drjones_secret')
     @strange_auth = ActionController::HttpAuthentication::Basic.encode_credentials('strange@stranger.example.org', 'strange_secret')
     @drj_root = '/nhin/v1/nhin.happyvalleypractice.example.org/drjones/messages'
+    activate_authlogic
   end
   
  should 'be able to route to the messages resource' do
@@ -26,7 +28,7 @@ class MessagesTest < ActionController::IntegrationTest
   end
   
   should 'return 401 when viewing messages without authorization' do
-    get @drj_root
+    get @drj_root, nil, {:accept => 'application/atom+xml'}
     assert_response :unauthorized
   end 
   
@@ -129,21 +131,17 @@ class MessagesTest < ActionController::IntegrationTest
    end
    
    should 'not be able to create message if not the owner' do
-     auth = ActionController::HttpAuthentication::Basic.encode_credentials('strange@stranger.example.org', 'strange_secret')
-     post @drj_root, SAMPLE_MESSAGE, {:authorization => auth, :content_type => 'message/rfc822', :accept => 'message/rfc822'}
+     post @drj_root, SAMPLE_MESSAGE, {:authorization => @strange_auth, :content_type => 'message/rfc822', :accept => 'message/rfc822'}
      assert_response :forbidden
    end
    
    should 'not be able to view message if not the owner' do
-     post @drj_root, SAMPLE_MESSAGE, {:authorization => @auth, :content_type => 'message/rfc822', :accept => 'message/rfc822'}
-     loc = @response.location
-     get loc, nil, {:authorization => @strange_auth, :accept => 'message/rfc822'}
+     get @drj_root + '/176b4be7-3e9b-4a2d-85b7-25a1cd089877', nil, {:authorization => @strange_auth, :accept => 'message/rfc822'}
      assert_response :forbidden
    end
    
    should 'not be able to view or update status if not the owner' do
-     post @drj_root, SAMPLE_MESSAGE, {:authorization => @auth, :content_type => 'message/rfc822', :accept => 'message/rfc822'}
-     loc = @response.location
+     loc = @drj_root + '/176b4be7-3e9b-4a2d-85b7-25a1cd089877'
      get status_uri(loc), nil, {:authorization => @strange_auth, :accept => 'text/plain'}
      assert_response :forbidden
      put status_uri(loc), 'ACK', {:authorization => @strange_auth, :content_type => 'text/plain', :accept => 'text/plain'}

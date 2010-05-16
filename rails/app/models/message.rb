@@ -3,8 +3,8 @@ class Message < ActiveRecord::Base
   has_one :status, :autosave => true
   validates_presence_of :raw_message
   
-  def self.find_by_address_and_status(domain, endpoint, status, current_user)
-    current_user_endpoint, current_user_domain = current_user.split('@')
+  def self.find_by_address_and_status(domain, endpoint, status, address)
+    current_user_endpoint, current_user_domain = address.split('@')
     find(:all, :include => :status, :conditions => ["to_domain = ? AND to_endpoint = ? AND statuses.status = ? AND " +
       " ((to_domain = ? and to_endpoint = ? ) OR (from_domain = ? and from_domain = ?))",
       domain, endpoint, status, current_user_domain, current_user_endpoint, current_user_domain, current_user_endpoint])

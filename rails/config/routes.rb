@@ -5,6 +5,9 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :messages, :path_prefix => '/nhin/v1/:domain/:endpoint', :requirements => {:domain => /.*/} do |messages|
     messages.resource :status, :requirements => {:domain => /.*/}
   end
+  
+  map.resource :user_session
+  map.root :controller => 'user_sessons', :action => 'new'
 
   # The priority is based upon order of creation: first created -> highest priority.
 

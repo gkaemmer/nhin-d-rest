@@ -1,3 +1,6 @@
+TODO: User object, based on authlogic
+TODO: Cert object and User-Cert relation
+TODO: Store message as signed and encrypted and decrypt and verify signature prior to display
 TODO: Setup message queue for posting to remote HISP
 TODO: Mail::Message.to_json
 TODO: Provider web inbox
