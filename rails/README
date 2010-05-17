@@ -26,6 +26,8 @@ rake db:migrate
 rake db:test:load
 rake test:integration
 
+Note that the integration driver tests will fail unless you configure the drjones@nhin.happyvalleypractice.example.org user in the development instance (TODO: figure out how to get those tests to hit the test instance)
+
 ===NGINX Configuration===
 
 The client certificate security model was tested with nginx. The particular SSL configuration used (in addition to the standard nginx SSL and proxy configurations) was (in the listen directive):
