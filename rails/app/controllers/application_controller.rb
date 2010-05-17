@@ -25,9 +25,26 @@ class ApplicationController < ActionController::Base
     @current_user_session = UserSession.find
   end
   
+  def client_certificate?
+    request.env['HTTP_SSL_CLIENT_VERIFY'] == 'SUCCESS'
+  end
+  
+  def basic_auth_user
+    if ActionController::HttpAuthentication::Basic.authorization(request) then
+      username, _pw = ActionController::HttpAuthentication::Basic.user_name_and_password(request)
+      @current_user = User.new(:login => username)
+    else
+      request_http_basic_authentication
+    end
+  end
+  
   def current_user
-    return @current_user if defined?(@current_user)
-    @current_user = current_user_session && current_user_session.record
+    if client_certificate? then
+      @current_user = basic_auth_user
+    else
+      return @current_user if defined?(@current_user)
+      @current_user = current_user_session && current_user_session.record
+    end
   end
   
   def redirect_user
