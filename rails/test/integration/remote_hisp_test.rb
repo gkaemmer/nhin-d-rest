@@ -15,10 +15,12 @@ class RemoteHISPTest < Test::Unit::TestCase
     
     should 'have messages that returns Atom feed' do
       @hisp.message_box = 'nhin.happyvalleypractice.example.org/drjones'
+      loc = @hisp.create_message(SAMPLE_MESSAGE)
+      mid = loc.split('/').last
+      @hisp.message_box = 'nhin.happyvalleypractice.example.org/drjones'
       atom_index = @hisp.messages
       feed = Feedzirra::Feed.parse(atom_index)
-      entry = feed.entries.first
-      assert_equal URI::split(entry.url)[5], @hisp.messages_path + '/ddc99797-0812-4226-9d87-158f9ae40bde'
+      assert feed.entries.detect { |entry| URI::split(entry.url)[5] == @hisp.messages_path + '/' + mid }
     end
     
     should 'be able to create a new message and then view it' do
