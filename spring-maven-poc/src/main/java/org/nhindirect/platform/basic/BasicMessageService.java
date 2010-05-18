@@ -15,7 +15,6 @@ import org.nhindirect.platform.MessageStatus;
 import org.nhindirect.platform.MessageStore;
 import org.nhindirect.platform.MessageStoreException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 
 public class BasicMessageService extends AbstractUserAwareClass implements MessageService {
 
@@ -144,6 +143,12 @@ public class BasicMessageService extends AbstractUserAwareClass implements Messa
         // send to remote HISP
         
         System.out.println("Sending message to remote HISP -- \n" + new String(message.getData()));
+        
+//        RestTemplate restTemplate = new RestTemplate(new CommonsClientHttpRequestFactory());
+        
+//        NhinDirectRestClient client = new NhinDirectRestClient(restTemplate, null);
+        
+//        client.postMessage(message);
         return null;
     }
     

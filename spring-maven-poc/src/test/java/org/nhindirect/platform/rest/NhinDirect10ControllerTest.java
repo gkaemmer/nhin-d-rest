@@ -1,14 +1,23 @@
 package org.nhindirect.platform.rest;
 
-import static org.junit.Assert.*;
-import static org.junit.matchers.JUnitMatchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.junit.matchers.JUnitMatchers.containsString;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.when;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.junit.Before;
 import org.junit.BeforeClass;
@@ -32,6 +41,7 @@ public class NhinDirect10ControllerTest {
 	
 	// Transient dependencies
 	@Mock private HttpServletRequest request;
+	@Mock private HttpServletResponse response;
 	List<Message> messageList;
 	HealthAddress address = new HealthAddress("domain", "endpoint");
 	
@@ -57,8 +67,12 @@ public class NhinDirect10ControllerTest {
 	public void getMessages_noNewMessages() throws Exception {
 		when(messageService.getNewMessages(address)).thenReturn(messageList);
 		when(request.getRequestURL()).thenReturn(new StringBuffer("requestURL"));
+		StringWriter out = new StringWriter();  
+		when(response.getWriter()).thenReturn(new PrintWriter(out));
 		
-		String atom = controller.getMessages(request, "domain", "endpoint");
+		controller.getMessages(request, response, "domain", "endpoint");
+		
+		String atom = out.toString();
 		
 		assertNotNull(atom);
 		assertTrue(atom.length() > 0);
@@ -76,9 +90,15 @@ public class NhinDirect10ControllerTest {
 		
 		messageList.add(message);
 		when(messageService.getNewMessages(address)).thenReturn(messageList);
-		when(request.getRequestURL()).thenReturn(new StringBuffer("requestURL"));
+
+		StringWriter out = new StringWriter();  
+        when(response.getWriter()).thenReturn(new PrintWriter(out));
+
+        when(request.getRequestURL()).thenReturn(new StringBuffer("requestURL"));
 		
-		String atom = controller.getMessages(request, "domain", "endpoint");
+		controller.getMessages(request, response, "domain", "endpoint");
+		
+		String atom = out.toString();
 		
 		assertNotNull(atom);
 		assertTrue(atom.length() > 0);
@@ -96,7 +116,7 @@ public class NhinDirect10ControllerTest {
 		UUID id = new UUID(1,1);
 		Message message = new Message();
 		message.setMessageId(id);
-		
+				
 		when(messageService.handleMessage(any(HealthAddress.class), anyString())).thenReturn(message);
 		String response = controller.postMessage("domain", "endpoint", "some message");
 		
