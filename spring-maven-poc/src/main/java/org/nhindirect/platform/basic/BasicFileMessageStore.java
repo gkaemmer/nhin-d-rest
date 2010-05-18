@@ -105,7 +105,7 @@ public class BasicFileMessageStore implements MessageStore {
                 message.setData(out.toByteArray());
                 in.close();
             } catch (IOException e) {
-                throw new MessageStoreException(e);
+                throw new MessageStoreException("Unable to load message: " + e.getMessage());
             }
             
             message.parseMetaData();
@@ -125,7 +125,7 @@ public class BasicFileMessageStore implements MessageStore {
         try {
             writeMessageToFile(message, messageFile);
         } catch (IOException e) {
-            throw new MessageStoreException(e);
+            throw new MessageStoreException("Unable to store message: " + e.getMessage());
         }
 
     }

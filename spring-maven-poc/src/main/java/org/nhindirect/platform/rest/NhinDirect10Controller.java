@@ -1,9 +1,13 @@
 package org.nhindirect.platform.rest;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Writer;
 import java.util.List;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.nhindirect.platform.HealthAddress;
 import org.nhindirect.platform.Message;
@@ -15,6 +19,7 @@ import org.nhindirect.platform.basic.AbstractUserAwareClass;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,31 +51,39 @@ public class NhinDirect10Controller extends AbstractUserAwareClass {
      */
     @PreAuthorize("hasRole('ROLE_EDGE')")
     @RequestMapping(method = RequestMethod.GET)
-    @ResponseBody
-    public String getMessages(HttpServletRequest request, @PathVariable("healthDomain") String healthDomain,
-                              @PathVariable("healthEndpoint") String healthEndpoint) throws MessageStoreException,
-            MessageServiceException {
+    public void getMessages(HttpServletRequest request, HttpServletResponse response,
+                            @PathVariable("healthDomain") String healthDomain,
+                            @PathVariable("healthEndpoint") String healthEndpoint) throws MessageStoreException,
+            MessageServiceException, IOException {
 
         HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
         List<Message> messages = messageService.getNewMessages(address);
 
-        return AtomPublisher.createFeed(request.getRequestURL().toString(), address, messages);
+        response.setContentType("application/atom+xml");
+
+        Writer out = response.getWriter();
+        out.write(AtomPublisher.createFeed(request.getRequestURL().toString(), address, messages));
+        out.close();
     }
 
     /**
-     * Post a message to a specified health address
+     * Post a message to a specified health address.
      */
     @PreAuthorize("hasRole('ROLE_EDGE') or hasRole('ROLE_HISP')")
     @RequestMapping(method = RequestMethod.POST)
-    @ResponseBody
-    public String postMessage(@PathVariable("healthDomain") String healthDomain,
-                              @PathVariable("healthEndpoint") String healthEndpoint, @RequestBody String rawMessage)
+    public void postMessage(HttpServletRequest request, HttpServletResponse response,
+                            @PathVariable("healthDomain") String healthDomain,
+                            @PathVariable("healthEndpoint") String healthEndpoint, @RequestBody String rawMessage)
             throws MessageStoreException, MessageServiceException {
 
         HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
         Message message = messageService.handleMessage(address, rawMessage);
 
-        return message.getMessageId().toString();
+        // This is technically incorrect. The if the response is on a remote
+        // HISP, the location header should
+        // be that resource on the remote HISP?
+        response.setHeader("Location", request.getRequestURL().toString() + "/" + message.getMessageId());
+
     }
 
     /**
@@ -78,16 +91,29 @@ public class NhinDirect10Controller extends AbstractUserAwareClass {
      */
     @PreAuthorize("hasRole('ROLE_EDGE')")
     @RequestMapping(value = "/{messageId}", method = RequestMethod.GET)
-    @ResponseBody
-    public String getMessage(@PathVariable("healthDomain") String healthDomain,
-                             @PathVariable("healthEndpoint") String healthEndpoint,
-                             @PathVariable("messageId") String messageId) throws MessageStoreException,
-            MessageServiceException {
+    public void getMessage(HttpServletResponse response, 
+                           @PathVariable("healthDomain") String healthDomain,
+                           @PathVariable("healthEndpoint") String healthEndpoint,
+                           @PathVariable("messageId") String messageId) throws MessageStoreException,
+            MessageServiceException, IOException {
 
+        
         HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
         Message message = messageService.getMessage(address, UUID.fromString(messageId));
-
-        return new String(message.getData());
+        
+        if (message == null) {
+            response.setStatus(404);
+            
+            PrintWriter out = new PrintWriter(response.getWriter());            
+            out.print("Message " + messageId + " not found");
+            out.close();
+        } else {
+            response.setContentType("message/rfc822");
+            
+            Writer out = response.getWriter();
+            out.write(new String(message.getData()));
+            out.close();
+        }
     }
 
     /**
@@ -121,9 +147,34 @@ public class NhinDirect10Controller extends AbstractUserAwareClass {
         HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
         messageService.setMessageStatus(address, UUID.fromString(messageId), MessageStatus
                 .valueOf(status.toUpperCase()));
+        
+        Message message = messageService.getMessage(address, UUID.fromString(messageId));
 
-        return "message status updated to " + status + " for message id " + messageId + " for address "
-                + address.toEmailAddress();
+        return message.getStatus().toString();
     }
 
+    /**
+     * Process MessageServiceException as an HTTP 400 error and return simple explanation to client.
+     */    
+    @ExceptionHandler(MessageServiceException.class)
+    public void handleMessageServiceException(Exception e, HttpServletResponse response) throws IOException {
+        sendSimpleErrorResponse(e, response, 400);
+    }
+    
+    /**
+     * Process MessageStoreException as an HTTP 500 error and return simple explanation to client.
+     */
+    @ExceptionHandler(MessageStoreException.class)
+    public void handleMessageStoreException(Exception e, HttpServletResponse response) throws IOException {
+        sendSimpleErrorResponse(e, response, 500);
+    }
+    
+    private void sendSimpleErrorResponse(Exception e, HttpServletResponse response, int status) throws IOException {
+        response.setStatus(400);
+        
+        PrintWriter out = new PrintWriter(response.getWriter());
+        
+        out.print(e.getMessage());
+        out.close();
+    }
 }
