@@ -8,14 +8,18 @@ import static org.junit.Assert.fail;
 import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
 
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
+import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -42,6 +46,8 @@ public class NhinDirect10ControllerTest {
 	// Transient dependencies
 	@Mock private HttpServletRequest request;
 	@Mock private HttpServletResponse response;
+	@Mock private PrintWriter writer;
+	@Mock private Message message;
 	List<Message> messageList;
 	HealthAddress address = new HealthAddress("domain", "endpoint");
 	
@@ -77,7 +83,7 @@ public class NhinDirect10ControllerTest {
 		assertNotNull(atom);
 		assertTrue(atom.length() > 0);
 		assertThat(atom, containsString("feed"));
-		// TODO Should inspect the feed to ensure we're not getting a message.
+		assertTrue(atom.indexOf("entry") == -1);
 	}
 	/**
 	 * Ensure that if the MessageService reports one new message, we see the message in the feed.
@@ -102,9 +108,8 @@ public class NhinDirect10ControllerTest {
 		
 		assertNotNull(atom);
 		assertTrue(atom.length() > 0);
-		assertThat(atom,containsString("feed"));
-		// TODO Should inspect the feed to ensure we are getting a message.
-		// XXX Don't see the message in the feed.
+		assertThat(atom, containsString("feed"));
+		assertThat(atom, containsString("entry"));
 	}
 	
 	/**
@@ -112,16 +117,16 @@ public class NhinDirect10ControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void postMessage_validResponseId() throws Exception {
+	public void postMessage_locationSet() throws Exception {
 		UUID id = new UUID(1,1);
-		Message message = new Message();
-		message.setMessageId(id);
-				
-		when(messageService.handleMessage(any(HealthAddress.class), anyString())).thenReturn(message);
-		String response = controller.postMessage("domain", "endpoint", "some message");
 		
-		assertNotNull(response);
-		assertTrue(UUID.fromString(response).compareTo(id) == 0);
+		when(message.getMessageId()).thenReturn(id);
+		when(messageService.handleMessage(any(HealthAddress.class), anyString())).thenReturn(message);
+		when(request.getRequestURL()).thenReturn(new StringBuffer("requestUrl"));
+		
+		controller.postMessage(request, response, "domain", "endpoint", "some message");
+		
+		verify(response).setHeader("Location", "requestUrl/" + id);
 	}
 	
 	/**
@@ -129,16 +134,34 @@ public class NhinDirect10ControllerTest {
 	 * @throws Exception
 	 */
 	@Test
-	public void getMessage_validData() throws Exception {
-		Message message = new Message();
-		message.setData("some data".getBytes());
+	public void getMessage_messageInResponse() throws Exception {
+		String data = "some data";
 		
+		when(message.getData()).thenReturn(data.getBytes());
 		when(messageService.getMessage(any(HealthAddress.class), any(UUID.class))).thenReturn(message);
+		when(response.getWriter()).thenReturn(writer);
 		
-		String response = controller.getMessage("domain", "endpoint", new UUID(0,0).toString());
+		controller.getMessage(response, "domain", "endpoint", new UUID(0,0).toString());
 		
-		assertNotNull(response);
-		assertEquals(response, "some data");
+		verify(response).setContentType("message/rfc822");
+		verify(writer).write(data);
+		verify(writer).close();
+	}
+	
+	/**
+	 * 
+	 * @throws Exception
+	 */
+	@Test
+	public void getMessage_noMessage404() throws Exception {
+		when(messageService.getMessage(any(HealthAddress.class), any(UUID.class))).thenReturn(null);
+		when(response.getWriter()).thenReturn(writer);
+		
+		controller.getMessage(response, "domain", "endpoint", new UUID(0,0).toString());
+		
+		verify(response).setStatus(404);
+		verify(writer).write(anyString(), anyInt(), anyInt());
+		verify(writer).close();
 	}
 	
 	/**
@@ -148,7 +171,7 @@ public class NhinDirect10ControllerTest {
 	@Test
 	public void getMessage_invalidRequestId() throws Exception {
 		try {
-			controller.getMessage("domain", "endpoint", "not a uuid");
+			controller.getMessage(response, "domain", "endpoint", "not a uuid");
 			fail();
 		} catch ( IllegalArgumentException e ) {
 			// Nothing to see here...
