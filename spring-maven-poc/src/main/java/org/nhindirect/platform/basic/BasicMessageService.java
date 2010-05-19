@@ -113,8 +113,8 @@ public class BasicMessageService extends AbstractUserAwareClass implements Messa
     }
 
     public void setMessageStatus(HealthAddress address, UUID messageId, MessageStatus status)
-            throws MessageStoreException, MessageServiceException {
-        
+            throws MessageStoreException, MessageServiceException {        
+
         validateUserForAddress(address);
         
         messageStore.setMessageStatus(address, messageId, status);
@@ -135,7 +135,6 @@ public class BasicMessageService extends AbstractUserAwareClass implements Messa
     }
     
     private void storeMessage(Message message) throws MessageStoreException{
-        System.out.println("Storing message -- \n" + new String(message.getData()));
         messageStore.putMessage(message.getTo(), message);
     }
     

@@ -2,7 +2,6 @@ package org.nhindirect.platform.rest;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.Writer;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,16 +26,12 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * Controller for NHIN Direct REST API as defined here:
- * http://nhindirect.org/REST+Implementation
+ * Controller for NHIN Direct REST API as defined here: http://nhindirect.org/REST+Implementation
  * 
  * This is not intended as a secure, reliable, or complete implementation. It's
  * intended as a proof of concept on using Spring MVC 3.0 for the REST
  * implementation.
  * 
- * I was planning on using the @PreAuthorize annotation for declaritive security
- * but I can't seem to get it working, so I've replaced it with some custom code
- * to check roles.
  * 
  */
 @Controller
@@ -59,11 +54,9 @@ public class NhinDirect10Controller extends AbstractUserAwareClass {
         HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
         List<Message> messages = messageService.getNewMessages(address);
 
-        response.setContentType("application/atom+xml");
+        String atomFeed = AtomPublisher.createFeed(request.getRequestURL().toString(), address, messages);
 
-        Writer out = response.getWriter();
-        out.write(AtomPublisher.createFeed(request.getRequestURL().toString(), address, messages));
-        out.close();
+        sendSimpleResponse(response, atomFeed, "application/atom+xml");
     }
 
     /**
@@ -91,28 +84,18 @@ public class NhinDirect10Controller extends AbstractUserAwareClass {
      */
     @PreAuthorize("hasRole('ROLE_EDGE')")
     @RequestMapping(value = "/{messageId}", method = RequestMethod.GET)
-    public void getMessage(HttpServletResponse response, 
-                           @PathVariable("healthDomain") String healthDomain,
+    public void getMessage(HttpServletResponse response, @PathVariable("healthDomain") String healthDomain,
                            @PathVariable("healthEndpoint") String healthEndpoint,
                            @PathVariable("messageId") String messageId) throws MessageStoreException,
             MessageServiceException, IOException {
 
-        
         HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
         Message message = messageService.getMessage(address, UUID.fromString(messageId));
-        
+
         if (message == null) {
-            response.setStatus(404);
-            
-            PrintWriter out = new PrintWriter(response.getWriter());            
-            out.print("Message " + messageId + " not found");
-            out.close();
+            sendSimpleResponse(response, "Message " + messageId + " not found", 404);
         } else {
-            response.setContentType("message/rfc822");
-            
-            Writer out = response.getWriter();
-            out.write(new String(message.getData()));
-            out.close();
+            sendSimpleResponse(response, new String(message.getData()), "message/rfc822");
         }
     }
 
@@ -147,34 +130,63 @@ public class NhinDirect10Controller extends AbstractUserAwareClass {
         HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
         messageService.setMessageStatus(address, UUID.fromString(messageId), MessageStatus
                 .valueOf(status.toUpperCase()));
-        
+
         Message message = messageService.getMessage(address, UUID.fromString(messageId));
 
         return message.getStatus().toString();
     }
 
     /**
-     * Process MessageServiceException as an HTTP 400 error and return simple explanation to client.
-     */    
+     * Process MessageServiceException as an HTTP 400 error and return simple
+     * explanation to client.
+     */
     @ExceptionHandler(MessageServiceException.class)
     public void handleMessageServiceException(Exception e, HttpServletResponse response) throws IOException {
-        sendSimpleErrorResponse(e, response, 400);
+        sendSimpleResponse(response, e.getMessage(), 400);
     }
-    
+
     /**
-     * Process MessageStoreException as an HTTP 500 error and return simple explanation to client.
+     * Process MessageStoreException as an HTTP 500 error and return simple
+     * explanation to client.
      */
     @ExceptionHandler(MessageStoreException.class)
     public void handleMessageStoreException(Exception e, HttpServletResponse response) throws IOException {
-        sendSimpleErrorResponse(e, response, 500);
+        sendSimpleResponse(response, e.getMessage(), 500);
+    }
+
+    /**
+     * Sends a simple HTTP response with a specified content type.
+     */
+    private void sendSimpleResponse(HttpServletResponse response, String message, String contentType)
+            throws IOException {
+        sendSimpleResponse(response, message, contentType, -1);
+    }
+
+    /**
+     * Sends a simple HTTP response with a specified status code.
+     */
+    private void sendSimpleResponse(HttpServletResponse response, String message, int status) throws IOException {
+        sendSimpleResponse(response, message, null, status);
     }
     
-    private void sendSimpleErrorResponse(Exception e, HttpServletResponse response, int status) throws IOException {
-        response.setStatus(400);
-        
+    /**
+     * Sends a simple HTTP response with a specified content type and and status
+     * code.
+     */
+    private void sendSimpleResponse(HttpServletResponse response, String message, String contentType, int status)
+            throws IOException {
+
+        if (status > -1) {
+            response.setStatus(status);
+        }
+
+        if (contentType != null) {
+            response.setContentType(contentType);
+        }
+
         PrintWriter out = new PrintWriter(response.getWriter());
-        
-        out.print(e.getMessage());
+
+        out.print(message);
         out.close();
     }
 }
