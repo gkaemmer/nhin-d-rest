@@ -71,12 +71,7 @@ public class NhinDirect10Controller extends AbstractUserAwareClass {
 
         HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
         Message message = messageService.handleMessage(address, rawMessage);
-
-        // This is technically incorrect. The if the response is on a remote
-        // HISP, the location header should
-        // be that resource on the remote HISP?
         response.setHeader("Location", request.getRequestURL().toString() + "/" + message.getMessageId());
-
     }
 
     /**
