@@ -42,7 +42,6 @@ class RemoteHISP
     req = Net::HTTP::Post.new(messages_path)
     req.basic_auth(user, pw)
     req.content_type = 'message/rfc822'
-    req['Accept'] = 'message/rfc822'
     req.body = message
     res = Net::HTTP.new(@domain, @port).start { |http| http.request(req) }
     res['Location']

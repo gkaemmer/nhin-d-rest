@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class MessageTest < ActiveSupport::TestCase
-  # Replace this with your real tests.
   should_validate_presence_of :raw_message
   should_have_one :status
   
@@ -17,6 +16,13 @@ class MessageTest < ActiveSupport::TestCase
     assert m.owned_by 'drsmith@nhin.sunnyfamilypractice.example.org'
     assert m.owned_by 'drjones@nhin.happyvalleypractice.example.org'
     assert !(m.owned_by 'foo@bar.baz.quux')
+  end
+  
+  should 'be signable and verifiable' do
+    m = Message.new(:raw_message => SAMPLE_MESSAGE)
+    t = m.signed_and_encrypted
+    m2 = Message.decrypt_and_verify(t)
+    assert !m2.nil?
   end
 end
 
