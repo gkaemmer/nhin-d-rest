@@ -102,13 +102,15 @@ public class RestClient {
      */
     public String postMessage(Message message) throws MessageServiceException {
         try {
-        	String url = "https://" + message.getTo().getDomain() + "/nhin/v1/" + message.getTo().getDomain() + "/" +
-            	message.getTo().getEndpoint() + "/messages";
+            String url = "https://" + message.getTo().getDomain() + "/nhin/v1/" + message.getTo().getDomain() + "/"
+                    + message.getTo().getEndpoint() + "/messages";
             HttpPost request = new HttpPost(url);
             request.setHeader("Content-Type", "message/rfc822");
             request.setEntity(new ByteArrayEntity(message.getData()));
 
             HttpResponse response = httpClient.execute(request);
+            
+            System.out.println(response.getStatusLine().getStatusCode());
 
             Header locationHeader = response.getFirstHeader("Location");
             if (locationHeader == null) {
