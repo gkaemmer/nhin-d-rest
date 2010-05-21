@@ -69,6 +69,8 @@ public class NhinDirect10Controller extends AbstractUserAwareClass {
                             @PathVariable("healthEndpoint") String healthEndpoint, @RequestBody String rawMessage)
             throws MessageStoreException, MessageServiceException {
 
+        System.out.println("*** USER Roles: " + getUser().getAuthorities());
+        
         HealthAddress address = new HealthAddress(healthDomain, healthEndpoint);
         Message message = messageService.handleMessage(address, rawMessage);
         response.setHeader("Location", request.getRequestURL().toString() + "/" + message.getMessageId());
@@ -114,7 +116,7 @@ public class NhinDirect10Controller extends AbstractUserAwareClass {
     /**
      * Set the status of a specific message sent to the specified health address
      */
-    @PreAuthorize("hasRole('ROLE_EDGE')")
+    @PreAuthorize("hasRole('ROLE_EDGE') or hasRole('ROLE_HISP')")
     @RequestMapping(value = "/{messageId}/status", method = RequestMethod.PUT)
     @ResponseBody
     public String setMessageStatus(@PathVariable("healthDomain") String healthDomain,
