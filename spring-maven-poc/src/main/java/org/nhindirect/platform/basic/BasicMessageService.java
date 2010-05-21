@@ -84,10 +84,10 @@ public class BasicMessageService extends AbstractUserAwareClass implements Messa
         String userName = getUser().getUsername();
 
         // Does the authenticated HISP doesn't match the From address on the message?
-        if (!userName.equals(message.getFrom().getDomain())) {
-            throw new MessageServiceException("User " + userName + " does not have permission to send message from address " +
-                message.getFrom());
-        }
+//        if (!userName.equals(message.getFrom().getDomain())) {
+//            throw new MessageServiceException("User " + userName + " does not have permission to send message from address " +
+//                message.getFrom());
+//        }
 
         // Is the To address valid on this HISP?
         if (!domainService.isLocalAddress(message.getTo())) {
