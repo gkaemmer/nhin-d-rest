@@ -101,6 +101,14 @@ public class RestClient {
      * Returns value of Location HTTP response header.
      */
     public String postMessage(Message message) throws MessageServiceException {
+        
+        HttpParams params = new BasicHttpParams();
+        params.setParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 5000);
+        httpClient = new DefaultHttpClient(params);
+        Scheme scheme = new Scheme("https", sslSocketFactory, 8443);
+        httpClient.getConnectionManager().getSchemeRegistry().register(scheme);
+        
+        
         try {
             String url = "https://" + message.getTo().getDomain() + "/nhin/v1/" + message.getTo().getDomain() + "/"
                     + message.getTo().getEndpoint() + "/messages";
@@ -110,12 +118,15 @@ public class RestClient {
 
             HttpResponse response = httpClient.execute(request);
             
-            System.out.println(response.getStatusLine().getStatusCode());
+            if (response.getStatusLine().getStatusCode() != 200) {
+                throw new MessageServiceException("Error returned from destination HISP: " + response.getStatusLine().toString());
+            }
 
             Header locationHeader = response.getFirstHeader("Location");
             if (locationHeader == null) {
                 return null;
             }
+                                   
             return locationHeader.getValue();
         } catch (Exception e) {
             // TODO: Better error handling
