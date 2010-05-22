@@ -31,28 +31,50 @@ class Message < ActiveRecord::Base
     assign_header_fields
   end
   
-  def signed_and_encrypted
+  def signed_mime_package
     from_cert, from_key, to_certs = Cert.find_mutually_trusted_cred_set_for_send(parsed_message.to, parsed_message.from)
     p7sig = OpenSSL::PKCS7::sign(from_cert, from_key, parsed_message.mime_package, [], OpenSSL::PKCS7::DETACHED)
-    signed = OpenSSL::PKCS7::write_smime(p7sig, parsed_message.mime_package)
-    encrypted = OpenSSL::PKCS7::encrypt(to_certs, signed)
+    smime = OpenSSL::PKCS7::write_smime(p7sig, parsed_message.mime_package)
+    smime.gsub("MIME-Version: 1.0\n", '')
+  end
+    
+  def signed_and_encrypted
+    from_cert, from_key, to_certs = Cert.find_mutually_trusted_cred_set_for_send(parsed_message.to, parsed_message.from)
+    encrypted = OpenSSL::PKCS7::encrypt(to_certs, self.signed_mime_package)
     smime = OpenSSL::PKCS7::write_smime(encrypted)
-    parsed_message.non_mime_headers + signed
-  end     
+    parsed_message.non_mime_headers + smime
+  end
   
-  
-  def self.decrypt_and_verify(text)
+  def self.decrypt(text)
     message = Mail.new(text)
     key_cert_pairs = Cert.find_key_cert_pairs_for_address(message.to)
     p7enc = OpenSSL::PKCS7::read_smime(text)
-    store = Cert.trust_store
-    Cert.add_sender_certs(store, message.from)
-    return message if p7enc.verify([], store)
     for p in key_cert_pairs
-      m = p7enc.decrypt(p[:key], p[:cert])
-      return Mail.new(m) if verify(m, certs)        
+      decrypted = p7enc.decrypt(p[:key], p[:cert])
+      m = Mail.new(decrypted)
+      return Message.new(:raw_message => message.non_mime_headers + decrypted) if m.content_type
     end
     return nil
+  end
+    
+  # 
+  # def self.new_from_encrypted(text)
+  #   if m
+  #     message.mime_package = m
+  #     return Message.new(:raw_message => decrypted) if !m.to.nil?
+  #   end
+  #   return nil
+  # end
+      
+  def signature_verified?
+    store = Cert.trust_store
+    Cert.add_sender_certs(store, self.from)
+    begin
+      p7enc = OpenSSL::PKCS7::read_smime(self.raw_source)
+    rescue OpenSSL::PKCS7::PKCS7Error
+      return false
+    end
+    return p7enc.verify([], store)
   end
      
   def to_param

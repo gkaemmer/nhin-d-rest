@@ -21,8 +21,14 @@ class MessageTest < ActiveSupport::TestCase
   should 'be signable and verifiable' do
     m = Message.new(:raw_message => SAMPLE_MESSAGE)
     t = m.signed_and_encrypted
-    m2 = Message.decrypt_and_verify(t)
-    assert !m2.nil?
+    m2 = Message.decrypt(t)
+    parsed = m2.parsed_message
+    assert_not_nil parsed
+    assert_not_nil parsed.from
+    assert_not_nil parsed.to
+    assert_equal 'drsmith@nhin.sunnyfamilypractice.example.org', parsed.from[0]
+    assert_equal 'drjones@nhin.happyvalleypractice.example.org', parsed.to[0]
+    assert_equal 'This is the third document I am sending you', parsed.parts[0].parts[0].body.raw_source
   end
 end
 
@@ -42,7 +48,7 @@ Content-Type: text/plain
 
 This is the third document I am sending you
 
---8837833223134.12.9837473322
+--8837833223134.12.9837473322--
 
 MESSAGE_END
 
