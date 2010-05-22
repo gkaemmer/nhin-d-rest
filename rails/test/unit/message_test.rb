@@ -29,6 +29,7 @@ class MessageTest < ActiveSupport::TestCase
     assert_equal 'drsmith@nhin.sunnyfamilypractice.example.org', parsed.from[0]
     assert_equal 'drjones@nhin.happyvalleypractice.example.org', parsed.to[0]
     assert_equal 'This is the third document I am sending you', parsed.parts[0].parts[0].body.raw_source
+    assert m2.signature_verified?
   end
 end
 
