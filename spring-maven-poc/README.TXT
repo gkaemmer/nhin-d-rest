@@ -79,7 +79,7 @@ ROLE_EDGE and ROLE_HISP.
         <authentication-provider>
             <user-service>
                 <user name="drsmith" password="drsmith" authorities="ROLE_EDGE"/>                
-                <user name="drmalec" password="drmalec" authorities="ROLE_EDGE"/>
+                <user name="drruby" password="drruby" authorities="ROLE_EDGE"/>
                 <user name="drmoyer" password="drmoyer" authorities="ROLE_EDGE"/>
                 <user name="sunnydocs" password="sunnydocs" authorities="ROLE_EDGE"/>                
                 <user name="nhin.healthypractice.example.org" authorities="ROLE_HISP"/>
@@ -93,8 +93,9 @@ A user with the ROLE_EDGE role will be considered an edge user. The user will be
 the entire REST API but his POST /messages logic will be appropriate for an EDGE user.
 
 A user with the ROLE_HISP role will be considered a HISP user. The user will only be able to 
-access the POST /messages resource. Message processing logic will follow the remote HISP model  
-and the username must match the domain of healthcare addresses for messages sent by this user.  
+access the POST /messages and PUT /messages/<MID>/status resources. Message processing logic 
+will follow the remote HISP model and the username must match the domain of healthcare addresses 
+for messages sent by this user.  
 
 === Client Cert Authentication ===
 
@@ -115,8 +116,8 @@ The format looks like this:
 For example:
 
 	drsmith@nhin.sunnyfamilypractice.example.org: drsmith,
-	drmalec@nhin.sunnyfamilypractice.example.org: drmalec,sunnydocs
-	drmoyer@nhin.sunnyfamilypractice.example.org: drmoyer,sunnydocs 
+	drruby@nhin.sunnyfamilypractice.example.org: drruby,sunnydocs
+	drmarten@nhin.sunnyfamilypractice.example.org: drmarten,sunnydocs 
 
 Note that a user can access and operate on behalf of multiple addresses and an address can
 be accessed by multiple users. It's possible for multiple domains to be configured on a
@@ -142,8 +143,8 @@ For edge user: 'From' address must be provisioned to user. 'To' address in URI m
 match 'To' address in message. Local 'To' addresses are stored on HISP, remote 'To' 
 addresses forwarded to remote HISP.
 
-For HISP user: 'To' address must be valid local HISP address. HISP user name must
-match domain in 'From' address.
+For HISP user: 'To' address must be valid local HISP address. 
+	// DISABLED HISP user name must match domain in 'From' address.
 
 === /messages/<ID> GET ===
 
@@ -157,8 +158,12 @@ match domain in 'From' address.
 
 === /messages/<ID>/status PUT ===
 
-* User must have ROLE_EDGE. 
-* User must be provisioned to address specified in URI.
+* User must have ROLE_EDGE or ROLE_HISP. 
+
+For Edge User: User must be provisioned to address specified in URI.
+
+For HISP user: We pretty much trust that the HISP can set the status of any message. 
+THIS IS DANGEROUS. We need a way to restrict the messages that the HISP can operate on. 
 
 
 == Running the HISP ==
@@ -182,9 +187,7 @@ An eclipse project can be generated for the project using the following maven co
 
 == TODO ==
 
-	Push messages to remote HISP
 	Require 'accept-type' headers?
-	Push status updates back to sending HISP
 	
 
 Chris Moyer (MedPlus)
