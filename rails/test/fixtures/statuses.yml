@@ -1,0 +1,16 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+one:
+  message_id: 1
+  message_uuid: 176b4be7-3e9b-4a2d-85b7-25a1cd089877
+  status: NEW
+
+two:
+  message_id: 2
+  message_uuid: a641bb84-5681-44e1-9f56-1b3dabc1d962
+  status: NEW
+ 
+three:
+  message_id: 3
+  message_uuid: deb7fdbd-8740-406d-96d9-74809cc3c507
+  status: NEW
