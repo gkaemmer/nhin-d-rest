@@ -17,14 +17,14 @@ class Mail::Message
       sym = f.name.downcase.gsub('-', '_').intern
       @@CONTENT_HEADERS.has_key?(sym)
     end
-    non_mime_headers.inject('') { |str, f| str + "#{f.name}: #{f.value}\n"}
+    non_mime_headers.inject('') { |str, f| str + "#{f.name}: #{f.value}\r\n"}
   end
   
   def mime_package
     mime_headers = @@CONTENT_HEADERS.keys.inject('') do |str, header|
       value = self.send header
       if value then
-        str + (@@CONTENT_HEADERS[header] + ': ' + value + "\n")
+        str + (@@CONTENT_HEADERS[header] + ': ' + value + "\r\n")
       else
         str
       end

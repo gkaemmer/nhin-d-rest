@@ -56,16 +56,7 @@ class Message < ActiveRecord::Base
     end
     return nil
   end
-    
-  # 
-  # def self.new_from_encrypted(text)
-  #   if m
-  #     message.mime_package = m
-  #     return Message.new(:raw_message => decrypted) if !m.to.nil?
-  #   end
-  #   return nil
-  # end
-      
+          
   def signature_verified?
     store = Cert.trust_store
     Cert.add_sender_certs(store, self.parsed_message.from)
