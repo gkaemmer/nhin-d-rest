@@ -1,11 +1,14 @@
 class Cert < ActiveRecord::Base
   
+  
   def self.find_mutually_trusted_cred_set_for_send(to_addrs, from_addrs)
     return OpenSSL::X509::Certificate.new(FROM_CRT), OpenSSL::PKey::RSA.new(FROM_KEY), [OpenSSL::X509::Certificate.new(TO_CRT)]
   end
   
   def self.find_key_cert_pairs_for_address(addrs)
-    [{ :key => OpenSSL::PKey::RSA.new(TO_KEY), :cert => OpenSSL::X509::Certificate.new(TO_CRT) }]
+    #TODO: include organization and user certificates as well by configuration
+    certs = self.find_by_scope(:hisp)
+    certs.collect { |c| {:key => OpenSSL::PKey::RSA.new(c.key), :cert => OpenSSL::X509::Certificate.new(c.cert)}}
   end
   
   def self.find_mutually_trusted_certs_for_receipt(to_addrs, from_addrs)
@@ -33,6 +36,7 @@ class Cert < ActiveRecord::Base
   
   @@SCOPES = {
       :trusted_ca => 'TRUSTED_CA',
+      :hisp => 'HISP',
       :health_domain => 'HEALTH_DOMAIN',
       :health_endpoint => 'ENDPOINT'
     }  
@@ -95,21 +99,3 @@ h1D33YmonW1npy8W84AshDGYYp4KjHEeQr+pQfoUm46+e1tOC22KNeJi7YhDs2yq
 D7b4mDr6WDtMSuewfapVEJdzsTDTRdWz
 -----END CERTIFICATE-----
 TO_CRT
-
-TO_KEY = <<TO_KEY
------BEGIN RSA PRIVATE KEY-----
-MIICXAIBAAKBgQClEcq+PnXMMfTKjEXqn1n7OxyhTxxsjTHPXJ/Mp/uu2tHcrF5z
-HHs/uRChEP5XODwYyfXjJM5+5IVgJmKEhmaisxSPA/bOc4UVcLcyvsPr43f30Ua0
-WKDn30js4UUr+JqBS70yyfqOxWSmZJJo43u42q0+AfQQt4dw8tJyzmgE9wIDAQAB
-AoGAXyUNNnDsFyGoVmNaHW1yQRQGYZgm6w7LahmaZi1hLZ0lH8weuLzu8YDra9tO
-rtlUEnm+iAl8GLoBgrU9TePmHe596OP7WKsHegQOsEsHNvuRGpxSZ/JcfNTNaF2Z
-TNw2YB9OmGnjCBuW11PRMjEVtd7YEZAX9ipfHEGDkTtTzXECQQDUbATNpXC53FA9
-HSarlLUAyZSf+y0YDwjtPiQ9Sut6kA4b/LMO/3gG0uepLSnY5RJir0hcYWvObM8K
-ahdNc455AkEAxu7qhvZQKXb3UEponA4wreNVsKCcgaHuVYGORvkCNWIih3mWLeGd
-P94RXaxZo5l7vHXM+94AmAr3dMDKtS2S7wJASiMdFgzsp+GNm5bF/VJcTdcM6T0H
-wwLUUcDDcyTnxJHsarYqZEyjPnZzZeceWNWyMgENFzjlIFl3dSIL2fs/uQJAPpA2
-+/kNHu1GPF8aZTHlR1q+wUzRy8ckkImtOE7pzeYuG9M2UvmoncR2S7J/gn8rtgqK
-TA/2udqBFpvnZHGPywJBAKh5ZjibGiKwaPDw3lU5ZzD/dw6sNxD2OKnurY1Poanq
-4AQdDyu3LBzdcGcN0rMFrbiIu52K9rfuqcu/aVNJhtU=
------END RSA PRIVATE KEY-----
-TO_KEY
