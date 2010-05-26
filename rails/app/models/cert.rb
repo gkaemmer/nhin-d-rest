@@ -2,7 +2,14 @@ class Cert < ActiveRecord::Base
   
   
   def self.find_mutually_trusted_cred_set_for_send(to_addrs, from_addrs)
-    return OpenSSL::X509::Certificate.new(FROM_CRT), OpenSSL::PKey::RSA.new(FROM_KEY), [OpenSSL::X509::Certificate.new(TO_CRT)]
+    certs = from_addrs.collect { |a| Cert.find_by_address(a) }
+    certs.flatten!
+    #TODO: get TO certs
+    #TODO: filter TO certs by trust anchors
+    #TODO: filter FROM certs by TO trust anchor
+    from_cert = certs.first
+    return OpenSSL::X509::Certificate.new(from_cert.cert), OpenSSL::PKey::RSA.new(from_cert.key),
+      [OpenSSL::X509::Certificate.new(TO_CRT)]
   end
   
   def self.find_key_cert_pairs_for_address(addrs)
@@ -23,6 +30,12 @@ class Cert < ActiveRecord::Base
     end
     store
   end
+  
+  def self.find_by_address(domain, endpoint)
+    # TODO: include org and user certs as well by configuration
+    #u = Users.find_by_login(endpoint '@' domain)
+    certs = self.find_by_scope(:hisp)
+  end    
   
   def self.add_sender_certs(store, from_addrs)
     store.add_cert OpenSSL::X509::Certificate.new(FROM_CRT)
