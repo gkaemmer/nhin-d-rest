@@ -180,13 +180,11 @@ An eclipse project can be generated for the project using the following maven co
 	mvn eclipse:eclipse 
 
 
-== TODO: ==
+== TODO ==
 
 	Push messages to remote HISP
-	Turn validation exceptions into something better than an HTML encoded 500 message with a stack trace	
-	Process correct content type headers for atom feed and other resources, ignored for now
-	Use the 'V' in Spring MVC
-	Create a real message store via embedded DB or something less hokey than current file system store
+	Require 'accept-type' headers?
+	Push status updates back to sending HISP
 	
 
 Chris Moyer (MedPlus)
