@@ -1,5 +1,6 @@
 require 'net/http'
 require 'net/https'
+require 'feedzirra'
 
 class RemoteHISP
   attr_reader :version_path, :domain, :from_health_domain, :from_health_endpoint, :pw, :port
@@ -29,6 +30,10 @@ class RemoteHISP
     @version_path + '/' + message_box + '/messages'
   end
   
+  def certs_path
+    @version_path + '/' + message_box + '/certs'
+  end
+  
   def user
     from_health_endpoint + '@' + from_health_domain
   end
@@ -45,7 +50,21 @@ class RemoteHISP
       
   
   def messages
-    get(messages_path, 'application/atom+xml')
+    begin
+      feed = Feedzirra::Feed.parse(get(messages_path, 'application/atom+xml'))
+    rescue Feezirra::NoParserAvailable
+      return nil
+    end
+    feed.entries.collect { |entry|  URI::split(entry.url)[5]}
+  end
+  
+  def certs
+    begin
+      feed = Feedzirra::Feed.parse(get(certs_path, 'application/atom+xml'))
+    rescue Feedzirra::NoParserAvailable
+      return nil
+    end
+    feed.entries.collect { |entry| OpenSSL::X509::Certificate.new(entry.content)}
   end
   
   def create_message(message)
