@@ -1,25 +1,22 @@
 package org.nhindirect.platform.rest;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.matchers.JUnitMatchers.containsString;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.anyInt;
-import static org.mockito.Mockito.when;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.UUID;
 
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -187,7 +184,7 @@ public class NhinDirect10ControllerTest {
 	@Test
 	public void getMessageStatus_invalidRequestId() {
 		try {
-			controller.getMessageStatus("domain", "endpoint", "not a uuid");
+			controller.getMessageStatus(response, "domain", "endpoint", "not a uuid");
 			fail();
 		} catch ( IllegalArgumentException e ) {
 			// Nothing to see here...
@@ -203,7 +200,7 @@ public class NhinDirect10ControllerTest {
 	@Test
 	public void setMessageStatus_invalidRequestId() {
 		try {
-			controller.setMessageStatus("domain", "endpoint", "not a uuid", MessageStatus.ACK.name());
+			controller.setMessageStatus(response, "domain", "endpoint", "not a uuid", MessageStatus.ACK.name());
 			fail();
 		} catch ( IllegalArgumentException e ) {
 			// Nothing to see here...
@@ -219,7 +216,7 @@ public class NhinDirect10ControllerTest {
 	@Test
 	public void setMessageStatus_invalidStatus() {
 		try {
-			controller.setMessageStatus("domain", "endpoint", new UUID(0,0).toString(), "not a status");
+			controller.setMessageStatus(response, "domain", "endpoint", new UUID(0,0).toString(), "not a status");
 			fail();
 		} catch ( IllegalArgumentException e ) {
 			// Nothing to see here...

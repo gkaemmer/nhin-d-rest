@@ -23,9 +23,9 @@
         <authentication-provider>
             <user-service>
                 <user name="drsmith" password="drsmith" authorities="ROLE_EDGE"/>                
-                <user name="drmalec" password="drmalec" authorities="ROLE_EDGE"/>
-                <user name="drmoyer" password="drmoyer" authorities="ROLE_EDGE"/>
-                <user name="norole" password="norole" authorities="ROLE_NONE"/>
+                <user name="drruby" password="drruby" authorities="ROLE_EDGE"/>
+                <user name="drmarten" password="drmarten" authorities="ROLE_EDGE"/>
+                <user name="drjones" password="drjones" authorities="ROLE_EDGE"/>
                 <user name="sunnydocs" password="sunnydocs" authorities="ROLE_EDGE"/>                
                 <user name="nhin.healthypractice.example.org" authorities="ROLE_HISP"/>
             </user-service>

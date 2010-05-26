@@ -52,6 +52,9 @@ public class BasicFileMessageStore implements MessageStore {
      * id is found twice on the file system with different statuses.
      */
     public Message getMessage(HealthAddress address, UUID messageId) throws MessageStoreException {
+        
+        log.debug("getMessage called for " + address.toEmailAddress() + " for message id " + messageId.toString());
+        
         String storePath = getStorePath(address);
         File store = new File(storePath);
 
@@ -71,6 +74,9 @@ public class BasicFileMessageStore implements MessageStore {
     }
 
     public List<Message> getMessages(HealthAddress address) throws MessageStoreException {
+        
+        log.debug("getMessages called for " + address.toEmailAddress());
+        
         String storePath = getStorePath(address);
 
         return getMessages(storePath);
@@ -117,6 +123,9 @@ public class BasicFileMessageStore implements MessageStore {
     }
 
     public void putMessage(HealthAddress address, Message message) throws MessageStoreException {
+        
+        log.debug("putMessage called for " + address.toEmailAddress() + " with message " + message.getMessageId().toString());
+        
         String storePath = getStorePath(address);
         String fileName = getMessageFileName(message.getMessageId(), message.getStatus());
 
@@ -147,6 +156,9 @@ public class BasicFileMessageStore implements MessageStore {
      */
     public void setMessageStatus(HealthAddress address, UUID messageId, MessageStatus status)
             throws MessageStoreException {
+        
+        log.debug("setMessageStatus called for " + address.toEmailAddress() + " for message id " + messageId.toString() + " with status " + status.toString());
+        
         String storePath = getStorePath(address);
         File store = new File(storePath);
 
