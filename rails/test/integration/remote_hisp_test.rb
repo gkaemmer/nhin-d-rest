@@ -7,7 +7,7 @@ class RemoteHISPTest < ActionController::IntegrationTest
   context 'A RemoteHISP' do
     
     setup do
-      @hisp = RemoteHISP.new('localhost', 'nhin.happyvalleypractice.example.org', 'drjones', 'drjones_secret', '3000')
+      @hisp = RemoteHISP.new('localhost', 'nhin.happyvalleypractice.example.org', 'drjones', 'drjones_secret', '3000', ssl = false)
     end
         
     should 'be able to configure the messages address' do

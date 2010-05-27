@@ -147,6 +147,17 @@ class MessagesTest < ActionController::IntegrationTest
      put status_uri(loc), 'ACK', {:authorization => @strange_auth, :content_type => 'text/plain', :accept => 'text/plain'}
      assert_response :forbidden
    end
+   
+   should 'be able to test for local vs remote domain' do
+     assert Domain.local? 'nhin.happyvalleypractice.example.org'
+     assert Domain.local? 'nhin.sunnyfamilypractice.example.org'
+     assert !(Domain.local? 'nhin.prettyvalleycare.example.org')
+     assert !(Domain.local? 'a.domain.i.dont.recognize.example.org')
+     assert !(Domain.remote? 'nhin.happyvalleypractice.example.org')
+     assert !(Domain.remote? 'nhin.sunnyfamilypractice.example.org')
+     assert Domain.remote? 'nhin.prettyvalleycare.example.org'
+     assert Domain.remote? 'a.domain.i.dont.recognize.example.org'
+   end
      
 end
 

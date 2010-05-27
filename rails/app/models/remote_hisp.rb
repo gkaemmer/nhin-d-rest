@@ -3,10 +3,10 @@ require 'net/https'
 require 'feedzirra'
 
 class RemoteHISP
-  attr_reader :version_path, :domain, :from_health_domain, :from_health_endpoint, :pw, :port
+  attr_reader :version_path, :domain, :from_health_domain, :from_health_endpoint, :pw, :port, :response
   attr_accessor :message_box
   
-  def initialize(hisp_domain, from_user_domain, from_user_endpoint, pw, port = 80, client_cert = nil, client_key = nil)
+  def initialize(hisp_domain, from_user_domain, from_user_endpoint, pw, port = 443, ssl = true, client_cert = nil, client_key = nil)
     @domain = hisp_domain
     @version_path = '/nhin/v1'
     @from_health_domain = from_user_domain
@@ -14,6 +14,7 @@ class RemoteHISP
     @pw = pw
     @port = port
     @http = Net::HTTP.new(@domain, @port)
+    @http.use_ssl = ssl
     if client_cert && client_key then
       @http.use_ssl = true
       @http.cert = client_cert
@@ -64,7 +65,7 @@ class RemoteHISP
     rescue Feedzirra::NoParserAvailable
       return nil
     end
-    feed.entries.collect { |entry| OpenSSL::X509::Certificate.new(entry.content)}
+    feed.entries.collect { |entry| OpenSSL::X509::Certificate.new(Base64.decode64(entry.content))}
   end
   
   def create_message(message)
@@ -74,7 +75,12 @@ class RemoteHISP
       req.content_type = 'message/rfc822'
       req.body = message
       res = http.request(req)
-      res['Location']
+      case res
+      when Net::HTTPSuccess then res['Location']
+      else
+        @response = res
+        nil
+      end
     end
   end
   
