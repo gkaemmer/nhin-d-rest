@@ -11,7 +11,7 @@ class MessagesTest < ActionController::IntegrationTest
     activate_authlogic
   end
   
- should 'be able to route to the messages resource' do
+  should 'be able to route to the messages resource' do
     assert_routing @drj_root, {:controller => 'messages', :action => 'index', :domain => 'nhin.happyvalleypractice.example.org', :endpoint => 'drjones'}
   end
   
@@ -69,10 +69,10 @@ class MessagesTest < ActionController::IntegrationTest
    end
    
    should 'be able to POST a new message at the messages resource and retrieve the resulting message resource' do
-     # TODO: remove this * Accepts: is message/rfc822
+     # Rails integration testing requires the inclusion of the Accept header, but this is not required
+     # in real life (just can't set one of the HTML accept types)
      post @drj_root, SAMPLE_MESSAGE, {:authorization => @auth, :content_type => 'message/rfc822', :accept => 'message/rfc822'}
      assert_response :created
-     assert_equal @response.content_type, 'message/rfc822' 
      loc = @response.location
      get loc, nil, {:authorization => @auth, :accept => 'message/rfc822'}
      assert_equal SAMPLE_MESSAGE, @response.body
