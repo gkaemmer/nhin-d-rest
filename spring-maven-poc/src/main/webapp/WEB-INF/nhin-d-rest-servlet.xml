@@ -15,7 +15,9 @@
  	<security:global-method-security pre-post-annotations="enabled"/>
  	
 	<bean id="fileMessageStore" class="org.nhindirect.platform.basic.BasicFileMessageStore" />
-	<bean id="messageService" class="org.nhindirect.platform.basic.BasicMessageService" />
+	<bean id="messageService" class="org.nhindirect.platform.basic.BasicMessageService"  init-method="init" >
+		<property name="smtpPropsFilename" value="etc/smtp.properties"/>
+	</bean>
 	<bean id="domainService" class="org.nhindirect.platform.basic.BasicDomainService" init-method="init" >
 		<property name="domainPropsFilename" value="etc/domain.properties"/>
 	</bean>

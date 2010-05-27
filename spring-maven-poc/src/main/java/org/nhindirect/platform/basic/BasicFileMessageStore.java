@@ -15,9 +15,12 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.mail.internet.AddressException;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import org.nhindirect.platform.HealthAddress;
 import org.nhindirect.platform.Message;
 import org.nhindirect.platform.MessageStatus;
@@ -40,7 +43,6 @@ import org.nhindirect.platform.MessageStoreException;
  * 
  */
 public class BasicFileMessageStore implements MessageStore {
-
     private final String DATA_ROOT = "data";
     private final String MESSAGE_EXTENSION = "txt";
     private final Pattern MESSAGE_FILE_PATTERN = Pattern.compile("([\\w-]*)\\.(.*)\\." + MESSAGE_EXTENSION);
@@ -48,13 +50,12 @@ public class BasicFileMessageStore implements MessageStore {
     private Log log = LogFactory.getLog(BasicFileMessageStore.class);
 
     /**
-     * Note that the behavior of this method is inconsistent if the same message
-     * id is found twice on the file system with different statuses.
+     * Note that the behavior of this method is inconsistent if the same message id is found twice on the file system with
+     * different statuses.
      */
     public Message getMessage(HealthAddress address, UUID messageId) throws MessageStoreException {
-        
         log.debug("getMessage called for " + address.toEmailAddress() + " for message id " + messageId.toString());
-        
+
         String storePath = getStorePath(address);
         File store = new File(storePath);
 
@@ -74,9 +75,8 @@ public class BasicFileMessageStore implements MessageStore {
     }
 
     public List<Message> getMessages(HealthAddress address) throws MessageStoreException {
-        
         log.debug("getMessages called for " + address.toEmailAddress());
-        
+
         String storePath = getStorePath(address);
 
         return getMessages(storePath);
@@ -102,7 +102,7 @@ public class BasicFileMessageStore implements MessageStore {
             message.setMessageId(UUID.fromString(m.group(1)));
             message.setStatus(MessageStatus.valueOf(m.group(2).toUpperCase()));
             message.setTimestamp(new Date(file.lastModified()));
-            
+
             try {
                 BufferedInputStream in = new BufferedInputStream(new FileInputStream(file));
 
@@ -113,8 +113,12 @@ public class BasicFileMessageStore implements MessageStore {
             } catch (IOException e) {
                 throw new MessageStoreException("Unable to load message: " + e.getMessage());
             }
-            
-            message.parseMetaData();
+
+            try {
+                message.parseMetaData();
+            } catch (AddressException e) {
+                throw new MessageStoreException("Unable to load message, bad address: " + e.getMessage());
+            }
         } else {
             throw new MessageStoreException("Message not found.");
         }
@@ -123,9 +127,8 @@ public class BasicFileMessageStore implements MessageStore {
     }
 
     public void putMessage(HealthAddress address, Message message) throws MessageStoreException {
-        
         log.debug("putMessage called for " + address.toEmailAddress() + " with message " + message.getMessageId().toString());
-        
+
         String storePath = getStorePath(address);
         String fileName = getMessageFileName(message.getMessageId(), message.getStatus());
 
@@ -151,14 +154,13 @@ public class BasicFileMessageStore implements MessageStore {
     }
 
     /**
-     * Note that the behavior of this method is inconsistent if the same message
-     * id is found twice on the file system with different statuses.
+     * Note that the behavior of this method is inconsistent if the same message id is found twice on the file system with
+     * different statuses.
      */
-    public void setMessageStatus(HealthAddress address, UUID messageId, MessageStatus status)
-            throws MessageStoreException {
-        
-        log.debug("setMessageStatus called for " + address.toEmailAddress() + " for message id " + messageId.toString() + " with status " + status.toString());
-        
+    public void setMessageStatus(HealthAddress address, UUID messageId, MessageStatus status) throws MessageStoreException {
+        log.debug("setMessageStatus called for " + address.toEmailAddress() + " for message id " + messageId.toString() +
+            " with status " + status.toString());
+
         String storePath = getStorePath(address);
         File store = new File(storePath);
 
@@ -178,7 +180,8 @@ public class BasicFileMessageStore implements MessageStore {
             File newFileName;
             newFileName = new File(foundFile.getParent(), getMessageFileName(messageId, status));
             boolean success = foundFile.renameTo(newFileName);
-            if (!success) throw new MessageStoreException("Message Status Update Failed");
+            if (!success)
+                throw new MessageStoreException("Message Status Update Failed");
         }
     }
 
