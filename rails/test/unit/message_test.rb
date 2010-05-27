@@ -1,7 +1,6 @@
 require 'test_helper'
 
 class MessageTest < ActiveSupport::TestCase
-  # Replace this with your real tests.
   should_validate_presence_of :raw_message
   should_have_one :status
   
@@ -17,6 +16,20 @@ class MessageTest < ActiveSupport::TestCase
     assert m.owned_by 'drsmith@nhin.sunnyfamilypractice.example.org'
     assert m.owned_by 'drjones@nhin.happyvalleypractice.example.org'
     assert !(m.owned_by 'foo@bar.baz.quux')
+  end
+  
+  should 'be signable and verifiable' do
+    m = Message.new(:raw_message => SAMPLE_MESSAGE)
+    t = m.signed_and_encrypted
+    m2 = Message.decrypt(t)
+    parsed = m2.parsed_message
+    assert_not_nil parsed
+    assert_not_nil parsed.from
+    assert_not_nil parsed.to
+    assert_equal 'drsmith@nhin.sunnyfamilypractice.example.org', parsed.from[0]
+    assert_equal 'drjones@nhin.happyvalleypractice.example.org', parsed.to[0]
+    assert_equal 'This is the third document I am sending you', parsed.parts[0].parts[0].body.raw_source
+    assert m2.signature_verified?
   end
 end
 
@@ -36,7 +49,7 @@ Content-Type: text/plain
 
 This is the third document I am sending you
 
---8837833223134.12.9837473322
+--8837833223134.12.9837473322--
 
 MESSAGE_END
 
