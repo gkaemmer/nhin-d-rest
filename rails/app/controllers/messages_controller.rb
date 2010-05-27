@@ -51,10 +51,10 @@ class MessagesController < ApplicationController
       if @message.save
         flash[:notice] = 'Message was successfully created.'
         format.html { redirect_to(message_path(params[:domain], params[:endpoint], @message)) }
-        format.rfc822  { head :status => :created, :location => message_path(params[:domain], params[:endpoint], @message) }
+        format.all  { head :status => :created, :location => message_path(params[:domain], params[:endpoint], @message) }
       else
         format.html { render :action => "new" }
-        format.rfc822 { render :text => @message.errors.full_messages.join('; '), :status => :not_acceptable }
+        format.all { render :text => @message.errors.full_messages.join('; '), :status => :not_acceptable }
       end
     end
   end
