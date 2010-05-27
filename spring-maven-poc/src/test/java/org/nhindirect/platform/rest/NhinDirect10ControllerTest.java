@@ -141,7 +141,7 @@ public class NhinDirect10ControllerTest {
 		controller.getMessage(response, "domain", "endpoint", new UUID(0,0).toString());
 		
 		verify(response).setContentType("message/rfc822");
-		verify(writer).write(data);
+		verify(writer).write(data, 0, 9);
 		verify(writer).close();
 	}
 	
