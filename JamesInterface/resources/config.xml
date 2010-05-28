@@ -173,9 +173,9 @@
    
 <mailet
   match="NhinMatcher" class="NhinMailet">
-  <nhindprops>C:/work/nhind/Testing/JamesInterface/james-2.3.2/apps/james-plus/conf/nhind.properties</nhindprops>
+  <nhindprops>C:/NHIND/nhin-d-rest/JamesInterface/james-2.3.2/apps/james-plus/conf/nhind.properties</nhindprops>
 <!--   <storefolder>c:/tmp/james</storefolder> -->
-  <storefolder>C:/work/nhind/Testing/JamesInterface/james-2.3.2/apps/james-plus/conf/jamesstore</storefolder>
+  <storefolder>C:/NHIND/nhin-d-rest/JamesInterface/james-2.3.2/apps/james-plus/conf/jamesstore</storefolder>
   <truststore>C:/NHIND/nhin-d-rest/spring-maven-poc/etc/keystore</truststore>
   <truststorePassword>password</truststorePassword>
   <nhinURL>https://nhin.sunnyfamilypractices.example.org:8443/nhin/v1/</nhinURL>
