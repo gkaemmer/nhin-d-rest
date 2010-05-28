@@ -17,6 +17,9 @@
 	<bean id="fileMessageStore" class="org.nhindirect.platform.basic.BasicFileMessageStore" />
 	<bean id="messageService" class="org.nhindirect.platform.basic.BasicMessageService"  init-method="init" >
 		<property name="smtpPropsFilename" value="etc/smtp.properties"/>
+		<property name="smtpUser" value="NHIN"/>
+		<property name="smtpPassword" value="password"/>
+		<property name="smtpHost" value="localhost"/>
 	</bean>
 	<bean id="domainService" class="org.nhindirect.platform.basic.BasicDomainService" init-method="init" >
 		<property name="domainPropsFilename" value="etc/domain.properties"/>

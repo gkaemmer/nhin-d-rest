@@ -43,13 +43,28 @@ public class BasicMessageService extends AbstractUserAwareClass implements Messa
 
     @Autowired
     protected RestClient restClient;
-
-    private String smtpPropsFilename;
+    
+    
+	private String smtpUser;
+    private String smtpPassword;
+    private String smtpHost;
+	private String smtpPropsFilename;
     private Map<String, InternetAddress> smtpAddresses;
 
     private Log log = LogFactory.getLog(BasicMessageService.class);
-    
-    
+
+    public void setSmtpUser(String smtpUser) {
+		this.smtpUser = smtpUser;
+	}
+
+	public void setSmtpPassword(String smtpPassword) {
+		this.smtpPassword = smtpPassword;
+	}
+
+    public void setSmtpHost(String smtpHost) {
+		this.smtpHost = smtpHost;
+	}
+
     public void setSmtpPropsFilename(String smtpPropsFilename) {
         this.smtpPropsFilename = smtpPropsFilename;
     }
@@ -237,7 +252,7 @@ public class BasicMessageService extends AbstractUserAwareClass implements Messa
     }
 
     private void sendSMTPMessage(Message message) throws MessageStoreException {
-    	MailClient mailClient = new MailClient("NHIN", "password", "localhost");
+    	MailClient mailClient = new MailClient(smtpUser, smtpPassword, smtpHost);
     	try {
 			mailClient.sendMailMessage(message);
 		} catch (MessagingException e) {
