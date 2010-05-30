@@ -40,10 +40,16 @@ class MessagesController < ApplicationController
   def edit
     @message = Message.find_by_uuid(params[:id])
   end
+  
+  # def create_remote
+  #   client_certs = Cert.find_by_scope(:hisp)
+  #   cert = client_certs && client_certs[0]
+  #   @hisp = RemoteHISP.new
 
   # POST /messages
   # POST /messages.xml
   def create
+    # return create_remote if Domain.remote? params[:domain]
     @message = Message.new(:raw_message => params[:message][:raw_message])
     return unless validate_ownership(@message)
 
