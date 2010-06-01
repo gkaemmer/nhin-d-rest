@@ -11,7 +11,7 @@ atom_feed(:url => certs_url(params[:domain], params[:endpoint],:atom)) do |feed|
           author.name(params[:endpoint] + "@" + params[:domain])
           author.email(params[:endpoint] + "@" + params[:domain])
         end
-        entry.content(Base64.encode64(cert.cert), :type => 'application/pkix-cert')
+        entry.content(Base64.encode64(OpenSSL::X509::Certificate.new(cert.cert).to_der), :type => 'application/pkix-cert')
       end
     end
   end
