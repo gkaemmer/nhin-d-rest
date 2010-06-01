@@ -1,5 +1,6 @@
 class MessagesController < ApplicationController
   before_filter :require_user  
+  hisp_actions :create
   
   # GET /messages
   # GET /messages.xml
@@ -41,15 +42,24 @@ class MessagesController < ApplicationController
     @message = Message.find_by_uuid(params[:id])
   end
   
-  # def create_remote
-  #   client_certs = Cert.find_by_scope(:hisp)
-  #   cert = client_certs && client_certs[0]
-  #   @hisp = RemoteHISP.new
+  def create_remote
+    @hisp = remote_hisp
+    loc = @hisp.create_message()
+    
+    respond_to do |format|
+      if loc
+        format.all  { head :status => :created, :location => loc }
+      else
+        format.all { render :text => @hisp.response.body, :status => @hisp.response.code }
+      end
+    end
+  end
+        
 
   # POST /messages
   # POST /messages.xml
   def create
-    # return create_remote if Domain.remote? params[:domain]
+    return create_remote if Domain.remote? params[:domain]
     @message = Message.new(:raw_message => params[:message][:raw_message])
     return unless validate_ownership(@message)
 
@@ -60,7 +70,7 @@ class MessagesController < ApplicationController
         format.all  { head :status => :created, :location => message_path(params[:domain], params[:endpoint], @message) }
       else
         format.html { render :action => "new" }
-        format.all { render :text => @message.errors.full_messages.join('; '), :status => :not_acceptable }
+        format.all { render :text => @message.errors.full_messages.join('; '), :status => :bad_request }
       end
     end
   end
