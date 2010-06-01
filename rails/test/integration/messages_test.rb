@@ -158,6 +158,36 @@ class MessagesTest < ActionController::IntegrationTest
      assert Domain.remote? 'nhin.prettyvalleycare.example.org'
      assert Domain.remote? 'a.domain.i.dont.recognize.example.org'
    end
+   
+   should 'create messge at remote HISP if domain is not local' do
+     remote_path = '/nhin/v1/nhin.prettyvalleycare.example.org/remote/messages'
+     remote_message_path = remote_path + '/99ff140c-25e4-4a71-819b-f49420d36deb'
+     RemoteHISP.any_instance.stubs(:create_message).returns remote_message_path
+     post remote_path, REMOTE_MESSAGE, {:authorization => @auth, :content_type => 'message/rfc822', :accept => 'message/rfc822'}
+     assert_response :success
+     assert_equal remote_message_path, @response.location
+   end
+   
+   should 'update status at remote HISP if domain is not local' do
+     remote_path = '/nhin/v1/nhin.prettyvalleycare.example.org/remote/messages'
+     remote_message_path = remote_path + '/99ff140c-25e4-4a71-819b-f49420d36deb'
+     RemoteHISP.any_instance.stubs(:create_message).returns remote_message_path
+     RemoteHISP.any_instance.stubs(:update_status).returns 'ACK'
+     post remote_path, REMOTE_MESSAGE, {:authorization => @auth, :content_type => 'message/rfc822', :accept => 'message/rfc822'}
+     put status_uri(@response.location), 'ACK', {:authorization => @auth, :content_type => 'text/plain', :accept => 'text/plain'}
+     assert_response :success
+     assert_equal 'ACK', @response.body
+   end
+   
+   should 'get status at remote HISP if domain is not local' do
+     remote_path = '/nhin/v1/nhin.prettyvalleycare.example.org/remote/messages'
+     remote_message_path = remote_path + '/99ff140c-25e4-4a71-819b-f49420d36deb'
+     RemoteHISP.any_instance.stubs(:create_message).returns remote_message_path
+     RemoteHISP.any_instance.stubs(:status).returns 'NEW'
+     post remote_path, REMOTE_MESSAGE, {:authorization => @auth, :content_type => 'message/rfc822', :accept => 'message/rfc822'}
+     get status_uri(@response.location), nil, {:authorization => @auth, :accept => 'text/plain'}
+     assert_equal 'NEW', @response.body
+   end    
      
 end
 
@@ -177,6 +207,27 @@ Content-Type: text/plain
 
 This is the third document I am sending you
 
+--8837833223134.12.9837473322--
+
+MESSAGE_END
+
+
+REMOTE_MESSAGE = <<MESSAGE_END
+From: drsmith@nhin.sunnyfamilypractice.example.org
+To: remote@nhin.prettyvalleycare.example.org
+Date: Thu, 08 Apr 2010 20:53:17 -0400
+Message-ID: <db00ed94-951b-4d47-8e86-585b31fe01be@nhin.sunnyfamilypractice.example.org>
+MIME-Version: 1.0
+Content-Type: multipart/mixed; boundary="8837833223134.12.9837473322"
+
+This text is traditionally ignored but can
+help non-MIME compliant readers provide
+information.
 --8837833223134.12.9837473322
+Content-Type: text/plain
+
+This message is being sent to a remote HISP.
+
+--8837833223134.12.9837473322--
 
 MESSAGE_END

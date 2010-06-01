@@ -135,8 +135,13 @@ class RemoteHISP
       req.content_type = 'text/plain'
       req['Accept'] = 'text/plain'
       req.body = status
-      res = http.request(req)
-      res.body
+      case res
+      when Net::HTTPSuccess, Net::HTTPRedirection then
+        res.body
+      else
+        @response = res
+        nil
+      end
     end
   end
 end

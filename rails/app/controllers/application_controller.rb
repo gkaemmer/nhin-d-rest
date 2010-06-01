@@ -4,15 +4,34 @@
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
   protect_from_forgery # See ActionController::RequestForgeryProtection for details
-  helper_method :current_user_session, :current_user
+  helper_method :current_user_session, :current_user, :current_role
 
   #filter_parameter_logging :password, :password_confirmation
   
+  @@hisp_actions = []
+  def self.hisp_actions(*actions)
+    @@hisp_actions.concat actions
+  end
+  
+  def remote_hisp
+    client_certs = Cert.find_by_scope(:hisp)
+    cert = client_certs && client_certs[0]
+    hisp = RemoteHISP.new(params[:domain],
+      :cert => {:cert => cert.cert, :key => cert.key },
+      :basic => {:user => "#{params[:endpoint]}@#{params[:domain]}", :pw => 'anything'})
+    hisp.message_box = "#{params[:domain]}/#{params[:endpoint]}"
+    hisp
+  end
   
   private
   
+  def hisp_allowed_action?
+    @@hisp_actions.include? params[:action].intern
+  end
+  
   def validate_ownership(message)
     address = current_user && current_user.login
+    return true if current_role == :hisp
     if !message.owned_by(address) then
       head :status => :forbidden
       return false
@@ -32,19 +51,30 @@ class ApplicationController < ActionController::Base
   def basic_auth_user
     if ActionController::HttpAuthentication::Basic.authorization(request) then
       username, _pw = ActionController::HttpAuthentication::Basic.user_name_and_password(request)
-      @current_user = User.new(:login => username)
-    else
-      request_http_basic_authentication
+      return User.new(:login => username)
     end
+    return nil
+  end
+  
+  def current_role
+    @current_user_role
   end
   
   def current_user
     if client_certificate? then
       @current_user = basic_auth_user
+      if @current_user
+        @current_user_role = :edge
+      else
+        @current_user_role = :hisp
+        @current_user = User.new(:login => 'HISP') #TODO: Client CN
+      end
     else
       return @current_user if defined?(@current_user)
       @current_user = current_user_session && current_user_session.record
+      @current_user_role = :edge if @current_user
     end
+    @current_user
   end
   
   def redirect_user
@@ -55,6 +85,15 @@ class ApplicationController < ActionController::Base
   end
   
   def require_user
+    user = current_user
+    if current_role == :hisp
+      if hisp_allowed_action?
+        return true
+      else
+        head :status => :forbidden
+        return false
+      end
+    end
     unless current_user
       respond_to do |format|
         format.html { redirect_user }
