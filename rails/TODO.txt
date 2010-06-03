@@ -1,6 +1,6 @@
-TODO: Query remote HISP for selection of TO certs and validate common anchors
+TODO: Validate certificates
+TODO: Validate conformance to common anchors
 TODO: Sign and encrypt with respect to all to/from recipients
-TODO: Setup message queue for posting to remote HISP
 TODO: Mail::Message.to_json
 TODO: Provider web inbox
 TODO: Move tests to rspec
