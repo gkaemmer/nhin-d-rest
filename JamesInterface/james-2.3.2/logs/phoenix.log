@@ -1,0 +1,19 @@
+INFO    2010-05-28 08:13:38.467 [Phoenix ] (): Logger started
+WARN    2010-05-28 08:13:38.482 [Phoenix ] (): Phoenix was not started by the daemon thus it will not be possible to restart the JVM via the Management interface.
+INFO    2010-05-28 08:13:38.654 [Phoenix.] (): Installing Sar located at file:/C:/NHIND/nhin-d-rest/JamesInterface/james-2.3.2/apps/james-plus.sar.
+INFO    2010-05-28 08:13:39.139 [Phoenix.] (): Verifying that all key-stores have valid names.
+INFO    2010-05-28 08:13:39.139 [Phoenix.] (): Verify that any keystore names used by grant or permission reference actual keystores
+INFO    2010-05-28 08:13:39.139 [Phoenix.] (): Verify that if target is null then actions is null.
+INFO    2010-05-28 08:13:39.311 [Phoenix.] (): Verifying that the name specified for Blocks and BlockListeners are valid.
+INFO    2010-05-28 08:13:39.311 [Phoenix.] (): Verifying that the names specified for Component are valid.
+INFO    2010-05-28 08:13:39.311 [Phoenix.] (): Verifying that the names specified for the Components are unique.
+INFO    2010-05-28 08:13:39.311 [Phoenix.] (): Verifying that the dependency mapping is valid according to ComponentInfos.
+INFO    2010-05-28 08:13:39.311 [Phoenix.] (): Verifying that the dependency mapping for every Component is valid with respect to other components.
+INFO    2010-05-28 08:13:39.311 [Phoenix.] (): Verifying that there are no circular dependencies between Components.
+INFO    2010-05-28 08:13:39.311 [Phoenix.] (): Verifying that the name specified for Blocks and BlockListeners are unique.
+INFO    2010-05-28 08:13:39.311 [Phoenix.] (): Verifying that the specified Blocks have valid types.
+INFO    2010-05-28 08:13:39.342 [Phoenix.] (): Verifying that the specified BlockListeners have valid types.
+INFO    2010-05-28 08:13:39.389 [Phoenix.] (): 20 Blocks to process for phase "startup". Order of processing = [dnsserver, database-connections, mailstore, users-store, localusersrepository, spoolrepository, sockets, thread-manager, scheduler, James, mailetpackages, matcherpackages, spoolmanager, connections, remotemanager, pop3server, smtpserver, nntp-repository, nntpserver, fetchmail].
+INFO    2010-05-28 08:13:39.670 [Phoenix.] (): Unknown resource. Bundle: 'org.apache.avalon.phoenix.components.monitor.Resources' Key: 'scanner.skipping-file.notice' Args: 'C:\NHIND\nhin-d-rest\JamesInterface\james-2.3.2\apps\james-plus' Reason: java.util.MissingResourceException: Can't find resource for bundle java.util.PropertyResourceBundle, key scanner.skipping-file.notice
+INFO    2010-05-28 08:13:44.201 [Phoenix.] (): 20 Blocks to process for phase "shutdown". Order of processing = [spoolmanager, matcherpackages, mailetpackages, remotemanager, pop3server, smtpserver, fetchmail, James, dnsserver, nntpserver, nntp-repository, spoolrepository, localusersrepository, users-store, mailstore, connections, sockets, scheduler, database-connections, thread-manager].
+INFO    2010-05-28 08:13:45.389 [Phoenix ] (): Shutting down because there are not any applications running.

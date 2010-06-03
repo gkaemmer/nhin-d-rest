@@ -16,7 +16,11 @@
  	
 	<bean id="fileMessageStore" class="org.nhindirect.platform.basic.BasicFileMessageStore" />
 	<bean id="certificateService" class="org.nhindirect.platform.basic.BasicCertificateService" />
-	<bean id="messageService" class="org.nhindirect.platform.basic.BasicMessageService">
+	<bean id="messageService" class="org.nhindirect.platform.basic.BasicMessageService"  init-method="init" >
+		<property name="smtpPropsFilename" value="etc/smtp.properties"/>
+		<property name="smtpUser" value="NHIN"/>
+		<property name="smtpPassword" value="password"/>
+		<property name="smtpHost" value="localhost"/>
 		<property name="smimeEnabled" value="true"/>
 	</bean>
 	<bean id="domainService" class="org.nhindirect.platform.basic.BasicDomainService" init-method="init" >
@@ -35,7 +39,7 @@
         <property name="trustStorePassword" value="password"/>
     </bean>
     
-    <bean class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
+   <bean class="org.springframework.web.servlet.view.BeanNameViewResolver"/>
 	<bean id="certFeed" class="org.nhindirect.platform.rest.CertificateAtomView"/>
 	<bean id="messageFeed" class="org.nhindirect.platform.rest.MessageAtomView"/>
 

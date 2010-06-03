@@ -16,7 +16,8 @@ public abstract class AbstractNhinDirectController extends AbstractUserAwareClas
     /**
      * Sends a simple HTTP response with a specified content type.
      */
-    protected void sendSimpleResponse(HttpServletResponse response, String message, String contentType) throws IOException {
+    protected void sendSimpleResponse(HttpServletResponse response, String message, String contentType)
+            throws IOException {
         sendSimpleResponse(response, message, contentType, -1);
     }
 
@@ -35,21 +36,21 @@ public abstract class AbstractNhinDirectController extends AbstractUserAwareClas
     }
 
     /**
-     * Sends a simple HTTP response with a specified content type and and status
-     * code.
+     * Sends a simple HTTP response with a specified content type and and status code.
      */
-    private void sendSimpleResponse(HttpServletResponse response, String message, String contentType, int status) throws IOException {
-    
+    private void sendSimpleResponse(HttpServletResponse response, String message, String contentType, int status)
+            throws IOException {
+
         if (status > -1) {
             response.setStatus(status);
         }
-    
+
         if (contentType != null) {
             response.setContentType(contentType);
         }
-    
+
         PrintWriter out = new PrintWriter(response.getWriter());
-    
+
         out.print(message);
         out.close();
     }

@@ -22,6 +22,8 @@
     <authentication-manager>
         <authentication-provider>
             <user-service>
+                <user name="drable" password="drable" authorities="ROLE_EDGE"/>                
+                <user name="drbaker" password="drbaker" authorities="ROLE_EDGE"/>                
                 <user name="drsmith" password="drsmith" authorities="ROLE_EDGE"/>                
                 <user name="drruby" password="drruby" authorities="ROLE_EDGE"/>
                 <user name="drmarten" password="drmarten" authorities="ROLE_EDGE"/>

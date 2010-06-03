@@ -1,9 +1,13 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
 one:
-  domain: MyString
-  local: false
+  domain: nhin.sunnyfamilypractice.example.org
+  local: true
 
 two:
-  domain: MyString
+  domain: nhin.happyvalleypractice.example.org
+  local: true
+  
+three:
+  domain: nhin.prettyvalleycare.example.org
   local: false
