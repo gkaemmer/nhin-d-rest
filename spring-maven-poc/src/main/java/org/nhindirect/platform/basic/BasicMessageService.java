@@ -7,6 +7,8 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 
 import org.nhindirect.platform.DomainService;
 import org.nhindirect.platform.HealthAddress;
@@ -17,6 +19,7 @@ import org.nhindirect.platform.MessageStatus;
 import org.nhindirect.platform.MessageStore;
 import org.nhindirect.platform.MessageStoreException;
 import org.nhindirect.platform.rest.RestClient;
+import org.nhindirect.platform.security.agent.NhinDAgentAdapter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -30,8 +33,19 @@ public class BasicMessageService extends AbstractUserAwareClass implements Messa
     @Autowired
     protected RestClient restClient;
 
+    @Autowired
+    protected NhinDAgentAdapter agent;
+
+    private boolean smimeEnabled = false;
+
+    private Log log = LogFactory.getLog(BasicMessageService.class);
+
     public List<Message> getNewMessages(HealthAddress address) throws MessageStoreException, MessageServiceException {
-        validateUserForAddress(address);
+        // If it's an edge, validate the user can access this address
+        if (!validateUserForAddress(address)) {
+            throw new MessageServiceException("User " + getUser().getUsername() + " not provisioned for address "
+                    + address);
+        }
 
         List<Message> messages = messageStore.getMessages(address);
 
@@ -56,18 +70,48 @@ public class BasicMessageService extends AbstractUserAwareClass implements Messa
 
     public Message handleMessage(HealthAddress address, String rawMessage) throws MessageStoreException,
             MessageServiceException {
+
+        // Either my client or Spring MVC or something is stripping off carriage returns.
+        // If the message doesn't have carriage returns, fix it. This is temporary until I
+        // track down the real problem.
+        if (rawMessage.indexOf("\r\n") < 0) {
+            rawMessage = rawMessage.replaceAll("\n", "\r\n");
+        }
+
         Message message = createMessage(rawMessage);
+
+        log.debug("handle message called, smime " + (smimeEnabled ? "enabled" : "disabled"));
 
         if (hasRole("ROLE_EDGE")) {
             validateEdgeSender(address, message);
+
+            // If S/MIME is enabled encrypt the message
+            if (smimeEnabled) {
+                agent.encryptMessage(message);
+            }
+
             // If it's a remote address then send it to the remote HISP.
             if (!domainService.isLocalAddress(message.getTo())) {
                 sendMessage(message);
+
+            } else {
+
+                // If it's a local address, we still need to make sure that
+                // the trust model allows delivery to the local address. We'll
+                // attempt to decrypt the message to validate that.
+                if (smimeEnabled) {
+                    agent.decryptMessage(message);
+                }
             }
-            // Store in all cases
 
         } else if (hasRole("ROLE_HISP")) {
             validateHispSender(message);
+
+            // If S/MIME is enabled decrypt the message
+            if (smimeEnabled) {
+                agent.decryptMessage(message);
+            }
+
         }
 
         storeMessage(message);
@@ -112,7 +156,8 @@ public class BasicMessageService extends AbstractUserAwareClass implements Messa
             MessageServiceException {
 
         // Pull a message out of the store... the user might be the recipient or the sender.
-
+        // THIS is not always the case with S/MIME support. A user won't be able to retrieve a sent
+        // message, since they are unable to decrypt and we store encrypted messages.
         Message message = messageStore.getMessage(address, messageId);
 
         // Check to see if the user is the recipient
@@ -139,23 +184,26 @@ public class BasicMessageService extends AbstractUserAwareClass implements Messa
     public void setMessageStatus(HealthAddress address, UUID messageId, MessageStatus status)
             throws MessageStoreException, MessageServiceException {
 
-        // If it's an edge, validate
+        // If it's an edge, validate the user can access this address
         if (hasRole("ROLE_EDGE")) {
-            validateUserForAddress(address);
+            if (!validateUserForAddress(address)) {
+                throw new MessageServiceException("User " + getUser().getUsername() + " not provisioned for address "
+                        + address);
+            }
         }
 
         // If it were an HISP, we may want to validate that the HISP has permission to set status
         // for this message by checking to see if the CN in the cert (username) has the same DNS
         // resolution as the domain from the TO address
-        
+
         // But for now, we won't.
 
         messageStore.setMessageStatus(address, messageId, status);
-        
+
         if (hasRole("ROLE_EDGE")) {
-            
+
             Message message = messageStore.getMessage(address, messageId);
-            
+
             if (!domainService.isLocalAddress(message.getFrom())) {
                 restClient.putStatus(message);
             }
@@ -187,4 +235,9 @@ public class BasicMessageService extends AbstractUserAwareClass implements Messa
         // Record the UUID generated by the destination HISP.
         message.setMessageId(UUID.fromString(uuid));
     }
+
+    public void setSmimeEnabled(boolean smimeEnabled) {
+        this.smimeEnabled = smimeEnabled;
+    }
+
 }

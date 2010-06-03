@@ -1,5 +1,5 @@
-From: drsmith@nhin.sunnyfamilypractice.example.org
-To: drjones@nhin.happyvalleypractice.example.org
+To: bob@nhin.uberhisp.com
+From: chris@nhin.moehisp.com
 Subject: I-D ACTION:draft-ietf-mailext-pipeline-01.txt
 Date: Thu, 05 Jan 95 10:53:24 -0500
 Message-ID: <9501051053.aa04167@IETF.CNR I.Reston.VA.US>

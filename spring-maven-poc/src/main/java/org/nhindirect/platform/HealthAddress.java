@@ -1,5 +1,6 @@
 package org.nhindirect.platform;
 
+
 /**
  * Simple non-robust implementation of the relevant portions of the
  * NHIN Direct Addressing specification.
@@ -13,6 +14,7 @@ public class HealthAddress implements Comparable<HealthAddress> {
         this.domain = domain;
         this.endpoint = endpoint;
     }
+
 
     public String getDomain() {
         return domain;

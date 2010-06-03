@@ -73,7 +73,7 @@ public class NhinDirect10ControllerTest {
 		StringWriter out = new StringWriter();  
 		when(response.getWriter()).thenReturn(new PrintWriter(out));
 		
-		controller.getMessages(request, response, "domain", "endpoint");
+		controller.getMessages("domain", "endpoint");
 		
 		String atom = out.toString();
 		
@@ -99,7 +99,7 @@ public class NhinDirect10ControllerTest {
 
         when(request.getRequestURL()).thenReturn(new StringBuffer("requestURL"));
 		
-		controller.getMessages(request, response, "domain", "endpoint");
+		controller.getMessages("domain", "endpoint");
 		
 		String atom = out.toString();
 		

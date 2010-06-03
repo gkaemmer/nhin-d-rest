@@ -21,13 +21,14 @@ public class BasicDomainService implements DomainService {
     private Map<String, HealthAddress> domainAddresses;
     private Map<String, Set<HealthAddress>> userAddresses;
     
+    //private Log log = LogFactory.getLog(BasicDomainService.class);
+    
     public void init() throws IOException {        
         domains = new TreeSet<String>();
         addressUsers = new TreeMap<HealthAddress, Set<String>>();
         domainAddresses = new TreeMap<String, HealthAddress>();
         userAddresses = new TreeMap<String, Set<HealthAddress>>();
-        
-        
+                
         BufferedReader in = new BufferedReader(new FileReader(domainPropsFilename));
         
         Properties props = new Properties();
