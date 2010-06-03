@@ -2,6 +2,7 @@ package org.nhindirect.platform.security.agent;
 
 import java.security.cert.X509Certificate;
 
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.nhindirect.platform.CertificateService;
@@ -16,12 +17,20 @@ public class CertificateServiceAdapter implements ICertificateService {
     protected CertificateService certificateService;
 
     public X509CertificateEx getPrivateCertificate(InternetAddress address) {
-        return X509CertificateEx.fromX509Certificate(getCertificate(address), certificateService
-                .getLocalPrivateKey(HealthAddress.parseEmailAddress(address.getAddress())));
+        try {
+            return X509CertificateEx.fromX509Certificate(getCertificate(address), certificateService
+                    .getLocalPrivateKey(HealthAddress.parseEmailAddress(address.getAddress())));
+        } catch (AddressException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public X509Certificate getCertificate(InternetAddress address) {
-        return certificateService.getLocalCertificate(HealthAddress.parseEmailAddress(address.getAddress()));
+        try {
+            return certificateService.getLocalCertificate(HealthAddress.parseEmailAddress(address.getAddress()));
+        } catch (AddressException e) {
+            throw new RuntimeException(e);
+        }
     }
 
 }

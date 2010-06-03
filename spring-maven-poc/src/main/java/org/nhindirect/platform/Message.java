@@ -7,21 +7,20 @@ import java.util.UUID;
 
 import javax.mail.MessagingException;
 import javax.mail.Session;
+import javax.mail.internet.AddressException;
 import javax.mail.internet.MimeMessage;
 
 public class Message {
 
-//    private static Pattern MIME_META_PATTERN = Pattern.compile("From: (.*)[\\r\\n]*To: (.*)[\\r\\n]*");
-    
     private UUID messageId;
     private byte[] data;
     private MessageStatus status;
-    
+
     private HealthAddress to;
     private HealthAddress from;
+
     private String subject;
-    
-    
+
     private Date timestamp;
 
     public UUID getMessageId() {
@@ -31,7 +30,7 @@ public class Message {
     public void setMessageId(UUID messageId) {
         this.messageId = messageId;
     }
-    
+
     public byte[] getData() {
         return data;
     }
@@ -71,7 +70,7 @@ public class Message {
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
-    
+
     public String getSubject() {
         return subject;
     }
@@ -79,12 +78,12 @@ public class Message {
     public void setSubject(String subject) {
         this.subject = subject;
     }
-    
-    public void parseMetaData() {
-        
+
+    public void parseMetaData() throws AddressException {
+
         // TODO : Graceful handle failures when the message can't be parsed or these
         // headers aren't found.
-        
+
         Session session = Session.getDefaultInstance(new Properties());
 
         ByteArrayInputStream in = new ByteArrayInputStream(data);
@@ -96,11 +95,6 @@ public class Message {
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
-        
-//        Matcher m = MIME_META_PATTERN.matcher(new String(data));
-//        if (m.find()) {
-//            from = HealthAddress.parseEmailAddress(m.group(1));
-//            to = HealthAddress.parseEmailAddress(m.group(2));
-//        }
+
     }
 }

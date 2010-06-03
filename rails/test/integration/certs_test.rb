@@ -39,7 +39,7 @@ END
     get @drj_root, nil, {:accept => 'application/atom+xml'}
     feed = Feedzirra::Feed.parse(response.body)
     entry = feed.entries.first
-    assert_equal @default_cert, entry.content
+    assert_equal @default_cert, OpenSSL::X509::Certificate.new(Base64.decode64(entry.content)).to_pem
   end
   
 end

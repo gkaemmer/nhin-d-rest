@@ -1,15 +1,24 @@
 package org.nhindirect.platform.basic;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
 import java.util.UUID;
+
+import javax.mail.MessagingException;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-
 import org.nhindirect.platform.DomainService;
 import org.nhindirect.platform.HealthAddress;
 import org.nhindirect.platform.Message;
@@ -18,9 +27,9 @@ import org.nhindirect.platform.MessageServiceException;
 import org.nhindirect.platform.MessageStatus;
 import org.nhindirect.platform.MessageStore;
 import org.nhindirect.platform.MessageStoreException;
+import org.nhindirect.platform.mailutil.MailClient;
 import org.nhindirect.platform.rest.RestClient;
 import org.nhindirect.platform.security.agent.NhinDAgentAdapter;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class BasicMessageService extends AbstractUserAwareClass implements MessageService {
@@ -37,8 +46,37 @@ public class BasicMessageService extends AbstractUserAwareClass implements Messa
     protected NhinDAgentAdapter agent;
 
     private boolean smimeEnabled = false;
+    private String smtpUser;
+    private String smtpPassword;
+    private String smtpHost;
+    private String smtpPropsFilename;
+    private Map<String, InternetAddress> smtpAddresses;
 
     private Log log = LogFactory.getLog(BasicMessageService.class);
+
+    public void init() throws Exception {
+        BufferedReader in = new BufferedReader(new FileReader(smtpPropsFilename));
+
+        Properties props = new Properties();
+        props.load(in);
+        in.close();
+
+        Set<String> names = props.stringPropertyNames();
+        smtpAddresses = new HashMap<String, InternetAddress>();
+
+        for (String propName : names) {
+            String propValue = props.getProperty(propName);
+            InternetAddress address;
+            try {
+                address = new InternetAddress(propValue, true);
+            } catch (AddressException e) {
+                // malformed address
+                continue;
+            }
+            log.debug("Adding entry to SMTP routing - name: " + propName + " address: " + address);
+            smtpAddresses.put(propName, address);
+        }
+    }
 
     public List<Message> getNewMessages(HealthAddress address) throws MessageStoreException, MessageServiceException {
         // If it's an edge, validate the user can access this address
@@ -154,7 +192,6 @@ public class BasicMessageService extends AbstractUserAwareClass implements Messa
 
     public Message getMessage(HealthAddress address, UUID messageId) throws MessageStoreException,
             MessageServiceException {
-
         // Pull a message out of the store... the user might be the recipient or the sender.
         // THIS is not always the case with S/MIME support. A user won't be able to retrieve a sent
         // message, since they are unable to decrypt and we store encrypted messages.
@@ -183,7 +220,6 @@ public class BasicMessageService extends AbstractUserAwareClass implements Messa
 
     public void setMessageStatus(HealthAddress address, UUID messageId, MessageStatus status)
             throws MessageStoreException, MessageServiceException {
-
         // If it's an edge, validate the user can access this address
         if (hasRole("ROLE_EDGE")) {
             if (!validateUserForAddress(address)) {
@@ -218,13 +254,36 @@ public class BasicMessageService extends AbstractUserAwareClass implements Messa
         message.setData(rawMessage.getBytes());
         message.setStatus(MessageStatus.NEW);
         message.setMessageId(messageId);
-        message.parseMetaData();
+        try {
+            message.parseMetaData();
+        } catch (AddressException e) {
+            throw new MessageStoreException("Unable to parse message meta data: " + e.getMessage());
+        }
 
         return message;
     }
 
     private void storeMessage(Message message) throws MessageStoreException {
         messageStore.putMessage(message.getTo(), message);
+
+        // if the to address is in the "routing table" of smtp recipients send it on
+        // TODO: Question - if the recipient is in the SMTP table do we also save the file for REST
+        // retrieval?
+        // Currently do both.
+        if (smtpAddresses.containsKey(message.getTo().getEndpoint())) {
+            log.debug("Got SMTP route match on message to " + message.getTo());
+            sendSMTPMessage(message);
+        }
+    }
+
+    private void sendSMTPMessage(Message message) throws MessageStoreException {
+        MailClient mailClient = new MailClient(smtpUser, smtpPassword, smtpHost);
+        try {
+            mailClient.sendMailMessage(message);
+        } catch (MessagingException e) {
+            throw new MessageStoreException("Unable to send SMTP message: " + e.getMessage());
+        }
+
     }
 
     private void sendMessage(Message message) throws MessageServiceException {
@@ -238,6 +297,22 @@ public class BasicMessageService extends AbstractUserAwareClass implements Messa
 
     public void setSmimeEnabled(boolean smimeEnabled) {
         this.smimeEnabled = smimeEnabled;
+    }
+
+    public void setSmtpUser(String smtpUser) {
+        this.smtpUser = smtpUser;
+    }
+
+    public void setSmtpPassword(String smtpPassword) {
+        this.smtpPassword = smtpPassword;
+    }
+
+    public void setSmtpHost(String smtpHost) {
+        this.smtpHost = smtpHost;
+    }
+
+    public void setSmtpPropsFilename(String smtpPropsFilename) {
+        this.smtpPropsFilename = smtpPropsFilename;
     }
 
 }

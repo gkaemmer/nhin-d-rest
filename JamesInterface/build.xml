@@ -1,0 +1,87 @@
+<project name="JameInterface" default="packageSAR">
+
+<!--  <property name="project.dir" value="c:/work/nhind/Testing/JamesInterface" /> -->
+  <property name="project.dir" value="." />
+  <property name="james.dir" value="james-2.3.2" />
+  <property name="javamail.dir" value="lib" />
+  <property name="temp.dir" value="tmp" />
+  
+  <target name="init" >
+    <echo>Project dir: ${project.dir}</echo>
+    <echo>James dir: ${james.dir}</echo>
+  </target>
+
+  <target name="moveOriginalSAR" depends="init" >
+    <move todir="${project.dir}">
+      <fileset dir="${project.dir}/${james.dir}/apps" >
+        <include name="james.sar" />
+      </fileset>
+    </move>
+    <delete includeEmptyDirs="true" failonerror="false" >
+      <fileset dir="${project.dir}/${james.dir}/apps/james" />
+    </delete>
+  </target>
+
+  <target name="unzipSAR" depends="moveOriginalSAR" >
+    <delete includeEmptyDirs="true" failonerror="false" >
+      <fileset dir="${project.dir}/${temp.dir}" />
+    </delete>
+    <unjar
+      src="${project.dir}/james.sar"
+      dest="${project.dir}/${temp.dir}" />
+  </target>
+  
+  <target name="compile" depends="unzipSAR" >
+    <echo>Compiling</echo>
+    <javac srcdir="." destdir=".">
+      <classpath>
+        <pathelement location="lib/mail.jar"/>
+        <pathelement location="lib/mailet-2.3.jar"/>
+        <pathelement location="lib/mailet-api-2.3.jar"/>
+        <pathelement path="${project.dir}/${temp.dir}/SAR-INF/lib" />
+      </classpath>
+    </javac>
+  	
+    <echo>Compiled</echo>
+  </target>
+  
+  <target name="packageJAR" depends="compile" >
+    <echo>Packaging</echo>
+    <copy file="resources/config.xml" todir="${project.dir}/${temp.dir}/SAR-INF" />
+    <copy file="resources/keystore" todir="${project.dir}/${temp.dir}/conf" />
+    <copy file="resources/nhind.properties" todir="${project.dir}/${temp.dir}/conf" />
+    <delete file="${project.dir}/${temp.dir}/SAR-INF/lib/unavailable.jar" />
+    <delete file="${project.dir}/${temp.dir}/SAR-INF/lib/NHINInterface.jar" />
+    <jar jarfile="${project.dir}/${temp.dir}/SAR-INF/lib/NHINInterface.jar"
+      basedir="." includes="org/nhin/**/*.class" />
+    <echo>Packaged</echo>
+  </target>
+
+  <target name="packageSAR" depends="packageJAR" >
+    <delete includeEmptyDirs="true" failonerror="false" >
+      <fileset dir="${project.dir}/${james.dir}/apps/james-plus" />
+    </delete>
+    <jar jarfile="${project.dir}/${james.dir}/apps/james-plus.sar"
+      basedir="${project.dir}/${temp.dir}" includes="**/*" />
+  </target>
+	
+  <target name="clean" depends="init">
+    <move todir="${project.dir}/${james.dir}/apps">
+      <fileset dir="${project.dir}" >
+        <include name="james.sar" />
+      </fileset>
+    </move>
+
+    <delete includeEmptyDirs="true" failonerror="false" >
+     	<fileset dir="${project.dir}/${james.dir}/apps/" >
+     		<include name="james-plus.sar" />
+     	</fileset>
+     	    	
+         <fileset dir="${project.dir}/${james.dir}/apps/james-plus" />
+         <fileset dir="${project.dir}/bin" />
+         <fileset dir="${project.dir}/org" />
+         <fileset dir="${project.dir}/tmp" />
+     </delete>
+  </target>
+  
+</project>

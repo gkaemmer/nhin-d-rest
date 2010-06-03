@@ -32,7 +32,7 @@ public class BasicCertificateService implements CertificateService {
     private final String STORE_EXTENSION = ".jks";
 
     public Log log = LogFactory.getLog(BasicCertificateService.class);
-    
+
     @Autowired
     private RestClient restClient;
 
@@ -68,22 +68,23 @@ public class BasicCertificateService implements CertificateService {
         return key;
     }
 
-    public X509Certificate getRemoteCertificate(HealthAddress address) {        
+    public X509Certificate getRemoteCertificate(HealthAddress address) {
         Collection<X509Certificate> certs = null;
-        
+
         try {
             certs = restClient.getRemoteCerts(address);
-            
-            return (X509Certificate)certs.toArray()[0]; 
+
+            return (X509Certificate) certs.toArray()[0];
         } catch (MessageServiceException e) {
             // TODO: do something better here
-            
+
             throw new CertificateException(e);
         }
     }
 
     public Collection<X509Certificate> getInboundTrustAnchors(HealthAddress address) {
-        File anchorsFile = new File(CERT_ROOT + "/" + address.toEmailAddress() + "/" + TRUST_INCOMING_FILE_NAME + STORE_EXTENSION);
+        File anchorsFile = new File(CERT_ROOT + "/" + address.toEmailAddress() + "/" + TRUST_INCOMING_FILE_NAME
+                + STORE_EXTENSION);
 
         try {
             return loadAllCerts(anchorsFile);
@@ -92,9 +93,10 @@ public class BasicCertificateService implements CertificateService {
             throw new CertificateException("Unable to trust anchors caused by " + e.getMessage());
         }
     }
-    
+
     public Collection<X509Certificate> getOutboundTrustAnchors(HealthAddress address) {
-        File anchorsFile = new File(CERT_ROOT + "/" + address.toEmailAddress() + "/" + TRUST_OUTGOING_FILE_NAME + STORE_EXTENSION);
+        File anchorsFile = new File(CERT_ROOT + "/" + address.toEmailAddress() + "/" + TRUST_OUTGOING_FILE_NAME
+                + STORE_EXTENSION);
 
         try {
             return loadAllCerts(anchorsFile);
@@ -104,12 +106,12 @@ public class BasicCertificateService implements CertificateService {
         }
     }
 
-    
     private File getUserKeystore(HealthAddress address) {
-        File userKeystore = new File(CERT_ROOT + "/" + address.toEmailAddress() + "/" + USER_CERTS_FILE_NAME + STORE_EXTENSION);
+        File userKeystore = new File(CERT_ROOT + "/" + address.toEmailAddress() + "/" + USER_CERTS_FILE_NAME
+                + STORE_EXTENSION);
         return userKeystore;
     }
-    
+
     private X509Certificate loadCert(File certFile) throws KeyStoreException, NoSuchAlgorithmException,
             CertificateException, IOException, java.security.cert.CertificateException {
         InputStream in = new FileInputStream(certFile);
@@ -138,7 +140,7 @@ public class BasicCertificateService implements CertificateService {
         PrivateKey key = null;
 
         ks.load(in, "".toCharArray());
-        in.close();        
+        in.close();
         Enumeration<String> aliases = ks.aliases();
 
         if (aliases.hasMoreElements()) {
@@ -150,10 +152,11 @@ public class BasicCertificateService implements CertificateService {
         return key;
     }
 
-    public Collection<X509Certificate> loadAllCerts(File certFile) throws KeyStoreException, NoSuchAlgorithmException, java.security.cert.CertificateException, IOException {
+    public Collection<X509Certificate> loadAllCerts(File certFile) throws KeyStoreException, NoSuchAlgorithmException,
+            java.security.cert.CertificateException, IOException {
 
         ArrayList<X509Certificate> certs = new ArrayList<X509Certificate>();
-        
+
         InputStream in = new FileInputStream(certFile);
         KeyStore ks = KeyStore.getInstance(KeyStore.getDefaultType());
 
@@ -170,9 +173,8 @@ public class BasicCertificateService implements CertificateService {
             cert = (X509Certificate) ks.getCertificate(alias);
             certs.add(cert);
         }
-        
+
         return certs;
     }
-
 
 }

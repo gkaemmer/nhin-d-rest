@@ -3,27 +3,58 @@ require 'net/https'
 require 'feedzirra'
 
 class RemoteHISP
-  attr_reader :version_path, :domain, :from_health_domain, :from_health_endpoint, :pw, :port
+  attr_reader :version_path, :domain, :user, :pw, :cert, :key, :port, :http
   attr_accessor :message_box
+
+  def set_auth_type(sym)
+    @use_basic_auth = sym == :basic || sym = :both
+    @use_cert_auth = sym == :cert || sym = :both
+  end
+
+  def cert_auth?
+    @use_cert_auth
+  end
   
-  def initialize(hisp_domain, from_user_domain, from_user_endpoint, pw, port = 80, client_cert = nil, client_key = nil)
-    @domain = hisp_domain
-    @version_path = '/nhin/v1'
-    @from_health_domain = from_user_domain
-    @from_health_endpoint = from_user_endpoint
-    @pw = pw
-    @port = port
-    @http = Net::HTTP.new(@domain, @port)
-    if client_cert && client_key then
-      @http.use_ssl = true
-      @http.cert = client_cert
-      @http.key = client_key
-      @http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+  def basic_auth?
+    @use_basic_auth
+  end
+  
+  
+  def auth_options(options)
+    basic = options[:basic]
+    cert = options[:cert]
+    if basic then
+      @use_basic_auth = true
+      @user = basic[:user]
+      @pw = basic[:pw]
+    end
+    if cert then
+      @use_cert_auth = true
+      @cert = cert[:cert]
+      @key = cert[:key]
     end
   end
-    
-  def health_address_path
-    @from_health_domain + '/' + @from_health_endpoint
+  # Options takes a hash
+  # RemoteHISP.new('www.example.com', :basic => {:user => 'jsmith@example,com', :pw => 's3cr1t'})
+  # RemoteHISP.new('www.example.com', :cert => {:cert => OpenSSL::X509::Certificate.new(cert_pem), OpenSSL:PKey:RSA.new(key_pem)})
+  # Basic and certificate based auth can be combined
+  # Other options:
+  # * :ssl => false (defaults true)
+  # * :port => '80' (default 443)
+  def initialize(hisp_domain, options={})
+    auth_options(options)
+    @domain = hisp_domain
+    @version_path = '/nhin/v1'
+    @port = options[:port] || '433'
+    @http = Net::HTTP.new(@domain, @port)
+    options[:ssl] = true if options[:ssl].nil?
+    @http.use_ssl = options[:ssl]
+    if cert_auth? then
+      @http.use_ssl = true
+      @http.cert = @cert
+      @http.key = @key
+      @http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+    end
   end
   
   def messages_path
@@ -34,14 +65,11 @@ class RemoteHISP
     @version_path + '/' + message_box + '/certs'
   end
   
-  def user
-    from_health_endpoint + '@' + from_health_domain
-  end
   
   def get (path, accept)
     @http.start do |http|
       req = Net::HTTP::Get.new(path)
-      req.basic_auth(user, pw)
+      req.basic_auth(user, pw) if basic_auth?
       req['Accept'] = accept
       res = http.request(req)
       res.body
@@ -64,17 +92,23 @@ class RemoteHISP
     rescue Feedzirra::NoParserAvailable
       return nil
     end
-    feed.entries.collect { |entry| OpenSSL::X509::Certificate.new(entry.content)}
+    feed.entries.collect { |entry| OpenSSL::X509::Certificate.new(Base64.decode64(entry.content))}
   end
   
   def create_message(message)
     @http.start do | http|
       req = Net::HTTP::Post.new(messages_path)
-      req.basic_auth(user, pw)
+      req.basic_auth(user, pw) if basic_auth?
       req.content_type = 'message/rfc822'
       req.body = message
       res = http.request(req)
-      res['Location']
+      case res
+      when Net::HTTPSuccess, Net::HTTPRedirection then
+        res['Location']
+      else
+        @response = res
+        nil
+      end
     end
   end
   
@@ -101,8 +135,13 @@ class RemoteHISP
       req.content_type = 'text/plain'
       req['Accept'] = 'text/plain'
       req.body = status
-      res = http.request(req)
-      res.body
+      case res
+      when Net::HTTPSuccess, Net::HTTPRedirection then
+        res.body
+      else
+        @response = res
+        nil
+      end
     end
   end
 end

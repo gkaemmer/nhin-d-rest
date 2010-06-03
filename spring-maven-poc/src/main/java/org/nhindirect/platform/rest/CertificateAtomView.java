@@ -32,7 +32,7 @@ public class CertificateAtomView extends AbstractAtomFeedView {
 
         for (X509Certificate cert : certs) {
             Entry entry = new Entry();
-         
+
             entry.setId(request.getRequestURL().toString() + "/" + cert.getSerialNumber().toString());
             entry.setTitle("Certificate for " + address.toEmailAddress());
             entry.setAuthors(createAuthorList(address));
@@ -54,7 +54,7 @@ public class CertificateAtomView extends AbstractAtomFeedView {
         feed.setUpdated(new Date());
         feed.setId(request.getRequestURL().toString());
     }
-    
+
     private ArrayList<Person> createAuthorList(HealthAddress address) {
         Person person = new Person();
         person.setEmail(address.toEmailAddress());
@@ -64,30 +64,30 @@ public class CertificateAtomView extends AbstractAtomFeedView {
         authors.add(person);
         return authors;
     }
-    
+
     private ArrayList<Content> createContent(X509Certificate cert) throws Exception {
         Content content = new Content();
-        content.setType("application/pkix-cert");       
-        
+        content.setType("application/pkix-cert");
+
         content.setValue(new String(Base64.encodeBase64(cert.getEncoded())));
 
         ArrayList<Content> contents = new ArrayList<Content>();
         contents.add(content);
-        
+
         return contents;
     }
-    
+
     private Content createReadableContent(X509Certificate cert) {
         Content content = new Content();
         content.setType("text/html");
-        
+
         StringWriter s = new StringWriter();
         s.append("Subject: " + cert.getSubjectX500Principal().toString());
         s.append("<br/>");
         s.append("Issuer: " + cert.getIssuerX500Principal().toString());
-                
+
         content.setValue(s.toString());
-        
+
         return content;
     }
 }

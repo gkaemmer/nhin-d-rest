@@ -3,6 +3,7 @@ package org.nhindirect.platform.security.agent;
 import java.security.cert.X509Certificate;
 import java.util.Collection;
 
+import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 
 import org.nhindirect.platform.CertificateService;
@@ -14,13 +15,20 @@ public class TrustSettingsStoreAdapter implements ITrustSettingsStore {
 
     @Autowired
     protected CertificateService certificateService;
-    
+
     public Collection<X509Certificate> getTrustAnchorsIncoming(InternetAddress address) {
-        return certificateService.getInboundTrustAnchors(HealthAddress.parseEmailAddress(address.getAddress()));
+        try {
+            return certificateService.getInboundTrustAnchors(HealthAddress.parseEmailAddress(address.getAddress()));
+        } catch (AddressException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public Collection<X509Certificate> getTrustAnchorsOutgoing(InternetAddress address) {
-        return certificateService.getOutboundTrustAnchors(HealthAddress.parseEmailAddress(address.getAddress()));
+        try {
+            return certificateService.getOutboundTrustAnchors(HealthAddress.parseEmailAddress(address.getAddress()));
+        } catch (AddressException e) {
+            throw new RuntimeException(e);
+        }
     }
-
 }

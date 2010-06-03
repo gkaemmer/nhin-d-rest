@@ -106,7 +106,7 @@ public class RestClient {
     }
 
     private KeyManager[] loadKeyManagers() throws Exception {
-        
+
         KeyStore keyStore = KeyStore.getInstance("jks");
         InputStream is = new FileInputStream(new File(keyStoreFilename));
         try {
@@ -189,41 +189,41 @@ public class RestClient {
     public Collection<X509Certificate> getRemoteCerts(HealthAddress address) throws MessageServiceException {
 
         ArrayList<X509Certificate> certs = new ArrayList<X509Certificate>();
-        
+
         try {
 
-            String url = "https://" + address.getDomain() + "/nhin/v1/" + address.getDomain() + "/" + address.getEndpoint()
-                    + "/certs";
-    
+            String url = "https://" + address.getDomain() + "/nhin/v1/" + address.getDomain() + "/"
+                    + address.getEndpoint() + "/certs";
+
             HttpGet request = new HttpGet(url);
             HttpResponse response = httpClient.execute(request);
-            
+
             InputStreamReader reader = new InputStreamReader(response.getEntity().getContent());
-            
+
             SyndFeedInput input = new SyndFeedInput();
             SyndFeed feed = input.build(reader);
-            
+
             reader.close();
             response.getEntity().consumeContent();
-            
+
             @SuppressWarnings("unchecked")
             List<SyndEntry> entries = feed.getEntries();
             for (SyndEntry entry : entries) {
                 @SuppressWarnings("unchecked")
-                List<SyndContent> contents = (List<SyndContent>)entry.getContents();
+                List<SyndContent> contents = (List<SyndContent>) entry.getContents();
                 for (SyndContent content : contents) {
                     if (content.getType().equals("application/pkix-cert")) {
                         String encodedCert = content.getValue();
                         byte[] rawCert = Base64.decodeBase64(encodedCert);
-                        
+
                         ByteArrayInputStream bis = new ByteArrayInputStream(rawCert);
                         CertificateFactory cf;
-                        cf = CertificateFactory.getInstance( "X.509" );
-                        X509Certificate cert = (X509Certificate)cf.generateCertificate( bis );
-                         
+                        cf = CertificateFactory.getInstance("X.509");
+                        X509Certificate cert = (X509Certificate) cf.generateCertificate(bis);
+
                         certs.add(cert);
                     }
-                    
+
                 }
             }
         } catch (Exception e) {
@@ -232,8 +232,8 @@ public class RestClient {
         }
 
         log.debug("Successfully retrieved " + certs.size() + " certs for " + address);
-        
+
         return certs;
-        
+
     }
 }

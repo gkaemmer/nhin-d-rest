@@ -7,7 +7,23 @@ class RemoteHISPTest < ActionController::IntegrationTest
   context 'A RemoteHISP' do
     
     setup do
-      @hisp = RemoteHISP.new('localhost', 'nhin.happyvalleypractice.example.org', 'drjones', 'drjones_secret', '3000')
+      @hisp = RemoteHISP.new('localhost', :basic => {:user => 'drjones@nhin.happyvalleypractice.example.org', :pw => 'drjones_secret'},
+        :port => '3000', :ssl => false)
+    end
+    
+    should 'be configurable via options' do
+      @hisp = RemoteHISP.new('www.example.com')
+      assert_equal 'www.example.com', @hisp.domain
+      assert @hisp.http.use_ssl?
+      assert_equal '433', @hisp.port
+      assert !@hisp.basic_auth?
+      assert !@hisp.cert_auth?
+      @hisp = RemoteHISP.new('localhost', :basic => {:user => 'drjones@nhin.happyvalleypractice.example.org', :pw => 'drjones_secret'},
+        :port => '3000', :ssl => false)
+      assert @hisp.basic_auth?
+      assert !@hisp.cert_auth?
+      assert_equal '3000', @hisp.http.port
+      assert !@hisp.http.use_ssl?
     end
         
     should 'be able to configure the messages address' do
