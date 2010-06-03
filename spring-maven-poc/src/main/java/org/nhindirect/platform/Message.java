@@ -1,13 +1,17 @@
 package org.nhindirect.platform;
 
+import java.io.ByteArrayInputStream;
 import java.util.Date;
+import java.util.Properties;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
+
+import javax.mail.MessagingException;
+import javax.mail.Session;
+import javax.mail.internet.MimeMessage;
 
 public class Message {
 
-    private static Pattern MIME_META_PATTERN = Pattern.compile("From: (.*)[\\r\\n]*To: (.*)[\\r\\n]*");
+//    private static Pattern MIME_META_PATTERN = Pattern.compile("From: (.*)[\\r\\n]*To: (.*)[\\r\\n]*");
     
     private UUID messageId;
     private byte[] data;
@@ -15,6 +19,8 @@ public class Message {
     
     private HealthAddress to;
     private HealthAddress from;
+    private String subject;
+    
     
     private Date timestamp;
 
@@ -66,11 +72,35 @@ public class Message {
         this.timestamp = timestamp;
     }
     
+    public String getSubject() {
+        return subject;
+    }
+
+    public void setSubject(String subject) {
+        this.subject = subject;
+    }
+    
     public void parseMetaData() {
-        Matcher m = MIME_META_PATTERN.matcher(new String(data));
-        if (m.find()) {
-            from = HealthAddress.parseEmailAddress(m.group(1));
-            to = HealthAddress.parseEmailAddress(m.group(2));
+        
+        // TODO : Graceful handle failures when the message can't be parsed or these
+        // headers aren't found.
+        
+        Session session = Session.getDefaultInstance(new Properties());
+
+        ByteArrayInputStream in = new ByteArrayInputStream(data);
+
+        try {
+            MimeMessage message = new MimeMessage(session, in);
+            from = HealthAddress.parseEmailAddress(message.getHeader("from", ","));
+            to = HealthAddress.parseEmailAddress(message.getHeader("to", ","));
+        } catch (MessagingException e) {
+            throw new RuntimeException(e);
         }
+        
+//        Matcher m = MIME_META_PATTERN.matcher(new String(data));
+//        if (m.find()) {
+//            from = HealthAddress.parseEmailAddress(m.group(1));
+//            to = HealthAddress.parseEmailAddress(m.group(2));
+//        }
     }
 }
