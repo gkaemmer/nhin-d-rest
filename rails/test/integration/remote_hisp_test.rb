@@ -27,22 +27,21 @@ class RemoteHISPTest < ActionController::IntegrationTest
     end
         
     should 'be able to configure the messages address' do
-      @hisp.message_box = 'nhin.sunnyfamilypractice.example.org/drsmith'
+      @hisp.address = 'drsmith@nhin.sunnyfamilypractice.example.org'
       assert_equal (@hisp.version_path + '/nhin.sunnyfamilypractice.example.org/drsmith/messages'), @hisp.messages_path
       assert_equal (@hisp.version_path + '/nhin.sunnyfamilypractice.example.org/drsmith/certs'), @hisp.certs_path
     end
     
     should 'have messages method that returns an array of message URIs' do
-      @hisp.message_box = 'nhin.happyvalleypractice.example.org/drjones'
+      @hisp.address = 'drjones@nhin.happyvalleypractice.example.org'
       loc = @hisp.create_message(SAMPLE_MESSAGE)
       mid = loc.split('/').last
-      @hisp.message_box = 'nhin.happyvalleypractice.example.org/drjones'
       message_locs = @hisp.messages
       assert message_locs.detect { |loc| loc == @hisp.messages_path + '/' + mid }
     end
     
     should 'be able to create a new message and then view it' do
-      @hisp.message_box = 'nhin.happyvalleypractice.example.org/drjones'
+      @hisp.address = 'drjones@nhin.happyvalleypractice.example.org'
       loc = @hisp.create_message(SAMPLE_MESSAGE)
       mid = loc.split('/').last
       message = @hisp.message(mid)
@@ -50,7 +49,7 @@ class RemoteHISPTest < ActionController::IntegrationTest
     end
     
     should 'be able to create a message, set status, and retrieve the updated status' do
-      @hisp.message_box = 'nhin.happyvalleypractice.example.org/drjones'
+      @hisp.address = 'drjones@nhin.happyvalleypractice.example.org'
       loc = @hisp.create_message(SAMPLE_MESSAGE)
       mid = loc.split('/').last
       message = @hisp.message(mid)
@@ -60,7 +59,7 @@ class RemoteHISPTest < ActionController::IntegrationTest
     end
     
     should 'have a certs method that returns an array of X509 certs' do
-      @hisp.message_box = 'nhin.happyvalleypractice.example.org/drjones'
+      @hisp.address = 'drjones@nhin.happyvalleypractice.example.org'
       certs = @hisp.certs
       example_cert = <<END
 -----BEGIN CERTIFICATE-----
@@ -104,6 +103,6 @@ Content-Type: text/plain
 
 This is the third document I am sending you
 
---8837833223134.12.9837473322
+--8837833223134.12.9837473322--
 
 MESSAGE_END
