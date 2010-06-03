@@ -4,7 +4,6 @@ require 'feedzirra'
 
 class RemoteHISP
   attr_reader :version_path, :domain, :user, :pw, :cert, :key, :port, :http
-  attr_accessor :message_box
 
   def set_auth_type(sym)
     @use_basic_auth = sym == :basic || sym = :both
@@ -58,11 +57,11 @@ class RemoteHISP
   end
   
   def messages_path
-    @version_path + '/' + message_box + '/messages'
+    @version_path + '/' + address_path + '/messages'
   end
   
   def certs_path
-    @version_path + '/' + message_box + '/certs'
+    @version_path + '/' + address_path + '/certs'
   end
   
   
@@ -75,7 +74,14 @@ class RemoteHISP
       res.body
     end
   end
-      
+  
+  def address=(address)
+    @address_endpoint, @address_domain = address.split('@')
+  end
+  
+  def address_path
+    "#{@address_domain}/#{@address_endpoint}"
+  end 
   
   def messages
     begin
@@ -135,6 +141,7 @@ class RemoteHISP
       req.content_type = 'text/plain'
       req['Accept'] = 'text/plain'
       req.body = status
+      res = http.request(req)
       case res
       when Net::HTTPSuccess, Net::HTTPRedirection then
         res.body

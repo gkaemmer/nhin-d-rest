@@ -59,7 +59,7 @@ class Message < ActiveRecord::Base
           
   def signature_verified?
     store = Cert.trust_store
-    Cert.add_sender_certs(store, self.parsed_message.from)
+    Cert.add_sender_certs(store, self.parsed_message.from[0])
     begin
       p7enc = OpenSSL::PKCS7::read_smime(self.parsed_message.raw_source)
     rescue OpenSSL::PKCS7::PKCS7Error
