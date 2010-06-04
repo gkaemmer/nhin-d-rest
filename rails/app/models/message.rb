@@ -31,6 +31,11 @@ class Message < ActiveRecord::Base
     assign_header_fields
   end
   
+  def encrypted?
+    m_type = parsed_message.mime_type
+    return m_type == 'application/pkcs7-mime' || m_type == 'application/x-pkcs7-mime'
+  end
+  
   def signed_mime_package
     from_cert, from_key, to_certs = Cert.find_mutually_trusted_cred_set_for_send(parsed_message.to, parsed_message.from)
     p7sig = OpenSSL::PKCS7::sign(from_cert, from_key, parsed_message.mime_package, [], OpenSSL::PKCS7::DETACHED)
