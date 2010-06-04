@@ -30,6 +30,7 @@ import org.nhindirect.platform.HealthAddress;
 import org.nhindirect.platform.Message;
 import org.nhindirect.platform.MessageService;
 import org.nhindirect.platform.MessageStatus;
+import org.springframework.web.servlet.ModelAndView;
 
 @RunWith(MockitoJUnitRunner.class)
 public class NhinDirect10ControllerTest {
@@ -73,15 +74,16 @@ public class NhinDirect10ControllerTest {
 		StringWriter out = new StringWriter();  
 		when(response.getWriter()).thenReturn(new PrintWriter(out));
 		
-		controller.getMessages("domain", "endpoint");
+		ModelAndView mav = controller.getMessages("domain", "endpoint");
+		List<Message> messages = (List<Message>)mav.getModel().get("messages"); 
+		HealthAddress address = (HealthAddress)mav.getModel().get("address");
 		
-		String atom = out.toString();
+		assertNotNull(messages);
+		assertNotNull(address);
+		assertTrue(messages.size() == 0);
 		
-		assertNotNull(atom);
-		assertTrue(atom.length() > 0);
-		assertThat(atom, containsString("feed"));
-		assertTrue(atom.indexOf("entry") == -1);
 	}
+	
 	/**
 	 * Ensure that if the MessageService reports one new message, we see the message in the feed.
 	 * @throws Exception
@@ -94,19 +96,15 @@ public class NhinDirect10ControllerTest {
 		messageList.add(message);
 		when(messageService.getNewMessages(address)).thenReturn(messageList);
 
-		StringWriter out = new StringWriter();  
-        when(response.getWriter()).thenReturn(new PrintWriter(out));
-
         when(request.getRequestURL()).thenReturn(new StringBuffer("requestURL"));
 		
-		controller.getMessages("domain", "endpoint");
+        ModelAndView mav = controller.getMessages("domain", "endpoint");
+        List<Message> messages = (List<Message>)mav.getModel().get("messages"); 
+        HealthAddress address = (HealthAddress)mav.getModel().get("address");
 		
-		String atom = out.toString();
-		
-		assertNotNull(atom);
-		assertTrue(atom.length() > 0);
-		assertThat(atom, containsString("feed"));
-		assertThat(atom, containsString("entry"));
+        assertNotNull(messages);
+        assertNotNull(address);
+        assertTrue(messages.size() == 1);
 	}
 	
 	/**
