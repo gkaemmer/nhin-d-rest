@@ -1,0 +1,61 @@
+TODO.txt for a rough plan for what needs to be done here.
+
+==Installation==
+
+===Prerequisites==
+
+
+Ruby with Gem support
+Sqlite3
+
+On OS X with Snow Leopard and developer packages, everything builds as is.
+
+On Linux, to build gems, you need devel packages for:
+
+sqlite3, curl, libxml2, libxslt
+
+
+===Installation tasks===
+gem install rails mongrel
+
+cd nhin-d-rest/rails
+rake gems:install
+rake gems:install RAILS_ENV=test
+script/server -d
+rake db:migrate
+rake db:test:load
+rake test:integration
+
+Note that the integration driver tests will fail unless you configure the drjones@nhin.happyvalleypractice.example.org user in the development instance (TODO: figure out how to get those tests to hit the test instance)
+
+Application comes with interactive user forms as well as API approach.
+
+To use the interactive app, you'll need to create some users at:
+
+http://localhost:3000/users/new
+
+===NGINX Configuration===
+
+The client certificate security model was tested with nginx. The particular SSL configuration used (in addition to the standard nginx SSL and proxy configurations) was (in the listen directive):
+
+ssl_protocols           TLSv1;
+ssl_session_cache		shared:SSL:10m;
+ssl_verify_client	    on;
+
+Note that the session cache is required due to an nginx bug with no session cache.
+
+In the location directive:
+proxy_set_header  SSL_CLIENT_VERIFY   $ssl_client_verify;
+
+=Overview=
+
+All the juicy bits are in routes.rb, messages_controller.rb, statuses_controller.rb, statuses.rb, and messages.rb
+Security code is in application_controller.rb
+
+Full integration tests in test/integration/messages_test.rb
+
+==Security Model==
+
+Basic authorization is used in all cases. If the client certificate check performed by the web server is successful, as signaled by the presence of an HTTP_SSL_CLIENT_VERIFY environment variable that equal SUCCESS, the authorization uses the supplied user name without checking the password. If the check is not performed, or fails, the authorization checks the password.
+
+The HTTP_SSL_CLIENT_VERIFY environment variable seems to be a standard Apache variable, and can be set in nginx with the configuration described above. This has not been tested in any other configuration besides nginx.
