@@ -19,7 +19,7 @@ class ApplicationController < ActionController::Base
     hisp = RemoteHISP.new(params[:domain],
       :cert => {:cert => cert.cert, :key => cert.key },
       :basic => {:user => "#{params[:endpoint]}@#{params[:domain]}", :pw => 'anything'})
-    hisp.message_box = "#{params[:domain]}/#{params[:endpoint]}"
+    hisp.address = "#{params[:endpoint]}@#{params[:domain]}"
     hisp
   end
   

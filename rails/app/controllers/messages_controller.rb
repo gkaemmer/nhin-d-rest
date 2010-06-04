@@ -44,7 +44,7 @@ class MessagesController < ApplicationController
   
   def create_remote
     @hisp = remote_hisp
-    loc = @hisp.create_message()
+    loc = @hisp.create_message @message.signed_and_encrypted
     
     respond_to do |format|
       if loc
@@ -59,10 +59,10 @@ class MessagesController < ApplicationController
   # POST /messages
   # POST /messages.xml
   def create
-    return create_remote if Domain.remote? params[:domain]
     @message = Message.new(:raw_message => params[:message][:raw_message])
-    return unless validate_ownership(@message)
-
+    return create_remote if Domain.remote? params[:domain]
+    return unless validate_message_security
+    
     respond_to do |format|
       if @message.save
         flash[:notice] = 'Message was successfully created.'
@@ -106,5 +106,25 @@ class MessagesController < ApplicationController
     end
   end
   
+  private
   
+  def validate_message_security
+    return false unless validate_ownership(@message)
+    return true unless current_role == :hisp
+    if !@message.encrypted?
+      head :status => :forbidden
+      return false
+    end
+    m = Message.decrypt(@message.raw_message)
+    if m.nil?
+      head :status => :forbidden
+      return false
+    end
+    unless m.signature_verified?
+      head :status => :forbidden
+      return flase
+    end
+    @message = m
+    return true
+  end
 end
