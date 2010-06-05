@@ -5,7 +5,7 @@ class StatusesController < ApplicationController
   
   
   def show_remote
-    @hisp = remote_hisp
+    @hisp = remote_hisp params[:domain], params[:endpoint]
     status = @hisp.status params[:message_id]
     
     render :text => status
@@ -24,7 +24,7 @@ class StatusesController < ApplicationController
   end
   
   def update_remote
-    @hisp = remote_hisp
+    @hisp = remote_hisp params[:domain], params[:endpoint]
     status = @hisp.update_status(params[:message_id], request.body.read)
     
     respond_to do |format|
