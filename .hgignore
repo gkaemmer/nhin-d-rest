@@ -11,6 +11,7 @@ rails/db/*.sqlite3
 rails/log/*
 rails/tmp/*
 rails/vendor/gems/*
+rails/config/*.pem
 syntax: regexp
 ^spring-maven-poc/target$
 syntax: regexp

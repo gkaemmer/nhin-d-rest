@@ -44,9 +44,10 @@ class RemoteHISP
     auth_options(options)
     @domain = hisp_domain
     @version_path = '/nhin/v1'
-    @port = options[:port] || '433'
+    @port = options[:port] || Net::HTTP.https_default_port
     @http = Net::HTTP.new(@domain, @port)
     options[:ssl] = true if options[:ssl].nil?
+    @http.ca_file = NHIN_D_CA_FILE
     @http.use_ssl = options[:ssl]
     if cert_auth? then
       @http.use_ssl = true
