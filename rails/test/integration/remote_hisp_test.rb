@@ -15,7 +15,7 @@ class RemoteHISPTest < ActionController::IntegrationTest
       @hisp = RemoteHISP.new('www.example.com')
       assert_equal 'www.example.com', @hisp.domain
       assert @hisp.http.use_ssl?
-      assert_equal '433', @hisp.port
+      assert_equal Net::HTTP.https_default_port, @hisp.port
       assert !@hisp.basic_auth?
       assert !@hisp.cert_auth?
       @hisp = RemoteHISP.new('localhost', :basic => {:user => 'drjones@nhin.happyvalleypractice.example.org', :pw => 'drjones_secret'},

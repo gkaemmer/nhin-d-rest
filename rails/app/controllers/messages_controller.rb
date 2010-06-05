@@ -43,7 +43,7 @@ class MessagesController < ApplicationController
   end
   
   def create_remote
-    @hisp = remote_hisp
+    @hisp = remote_hisp(@to_domain, @to_endpoint)
     loc = @hisp.create_message @message.signed_and_encrypted
     
     respond_to do |format|
@@ -61,7 +61,10 @@ class MessagesController < ApplicationController
   def create
     @message = Message.new(:raw_message => params[:message][:raw_message])
     if  @message.parsed_message.to
-      return create_remote if Domain.remote? Mail::Address.new(@message.parsed_message.to[0]).domain
+      a = Mail::Address.new(@message.parsed_message.to[0])
+      @to_domain = a.domain
+      @to_endpoint = a.local
+      return create_remote if Domain.remote? @to_domain
     end
     return unless validate_message_security
     
