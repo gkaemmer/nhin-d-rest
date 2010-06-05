@@ -3,7 +3,7 @@ require 'net/https'
 require 'feedzirra'
 
 class RemoteHISP
-  attr_reader :version_path, :domain, :user, :pw, :cert, :key, :port, :http
+  attr_reader :version_path, :domain, :user, :pw, :cert, :key, :port, :http, :response
 
   def set_auth_type(sym)
     @use_basic_auth = sym == :basic || sym = :both
@@ -87,7 +87,7 @@ class RemoteHISP
   def messages
     begin
       feed = Feedzirra::Feed.parse(get(messages_path, 'application/atom+xml'))
-    rescue Feezirra::NoParserAvailable
+    rescue Feedzirra::NoParserAvailable
       return nil
     end
     feed.entries.collect { |entry|  URI::split(entry.url)[5]}
