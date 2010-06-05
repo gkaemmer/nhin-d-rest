@@ -60,7 +60,9 @@ class MessagesController < ApplicationController
   # POST /messages.xml
   def create
     @message = Message.new(:raw_message => params[:message][:raw_message])
-    return create_remote if Domain.remote? params[:domain]
+    if  @message.parsed_message.to
+      return create_remote if Domain.remote? Mail::Address.new(@message.parsed_message.to[0]).domain
+    end
     return unless validate_message_security
     
     respond_to do |format|
