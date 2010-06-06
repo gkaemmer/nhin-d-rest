@@ -1,0 +1,7 @@
+TODO: Validate certificates
+TODO: Validate conformance to common anchors
+TODO: Sign and encrypt with respect to all to/from recipients
+TODO: Mail::Message.to_json
+TODO: Provider web inbox
+TODO: Move tests to rspec
+TODO: Package for remote deploy

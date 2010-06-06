@@ -1,0 +1,41 @@
+Certificate:
+    Data:
+        Version: 1 (0x0)
+        Serial Number: 64211 (0xfad3)
+        Signature Algorithm: md5WithRSAEncryption
+        Issuer: C=US, ST=Ohio, O=NHIN Direct CA, CN=ca.nhindirect.org
+        Validity
+            Not Before: May 12 17:33:50 2010 GMT
+            Not After : May  9 17:33:50 2020 GMT
+        Subject: C=US, O=NHIN Direct HISP, CN=nhin.sunnyfamilypractice.example.org
+        Subject Public Key Info:
+            Public Key Algorithm: rsaEncryption
+            RSA Public Key: (1024 bit)
+                Modulus (1024 bit):
+                    00:cc:23:c1:89:0a:94:a2:fd:ee:ac:84:cb:08:15:
+                    ae:dc:bd:71:e6:f9:77:1e:00:ed:2d:48:a8:91:f1:
+                    09:8d:74:bf:bb:3a:e0:4c:4e:4f:f6:16:c7:b3:64:
+                    a2:48:74:39:05:33:5b:0e:c8:c4:2f:1a:20:bd:8f:
+                    7b:4b:6d:51:a6:50:c6:9a:93:2b:44:3b:83:5e:56:
+                    1b:cd:9b:08:d4:ef:67:0f:34:b0:93:2c:50:f8:83:
+                    90:8e:39:7c:37:e7:a5:b9:3a:38:13:aa:8e:88:99:
+                    7d:8a:b1:64:2b:68:c8:d3:fb:22:7f:8d:c2:4b:b3:
+                    c0:c7:8b:65:89:9b:f7:d1:3f
+                Exponent: 65537 (0x10001)
+    Signature Algorithm: md5WithRSAEncryption
+        42:ac:66:3d:c1:6c:5c:5a:21:f5:ea:82:1a:d7:26:18:3f:ec:
+        41:81:6a:69:f0:ed:3f:25:ef:a0:4a:6b:9d:1f:6c:79:46:38:
+        1c:00:f5:f2:da:b1:79:d2:bd:89:30:fb:b9:6e:35:52:17:7b:
+        b0:af:63:59:63:2d:45:10:02:70
+-----BEGIN CERTIFICATE-----
+MIIB2DCCAYICAwD60zANBgkqhkiG9w0BAQQFADBRMQswCQYDVQQGEwJVUzENMAsG
+A1UECBMET2hpbzEXMBUGA1UEChMOTkhJTiBEaXJlY3QgQ0ExGjAYBgNVBAMTEWNh
+Lm5oaW5kaXJlY3Qub3JnMB4XDTEwMDUxMjE3MzM1MFoXDTIwMDUwOTE3MzM1MFow
+VzELMAkGA1UEBhMCVVMxGTAXBgNVBAoTEE5ISU4gRGlyZWN0IEhJU1AxLTArBgNV
+BAMTJG5oaW4uc3VubnlmYW1pbHlwcmFjdGljZS5leGFtcGxlLm9yZzCBnzANBgkq
+hkiG9w0BAQEFAAOBjQAwgYkCgYEAzCPBiQqUov3urITLCBWu3L1x5vl3HgDtLUio
+kfEJjXS/uzrgTE5P9hbHs2SiSHQ5BTNbDsjELxogvY97S21RplDGmpMrRDuDXlYb
+zZsI1O9nDzSwkyxQ+IOQjjl8N+eluTo4E6qOiJl9irFkK2jI0/sif43CS7PAx4tl
+iZv30T8CAwEAATANBgkqhkiG9w0BAQQFAANBAEKsZj3BbFxaIfXqghrXJhg/7EGB
+amnw7T8l76BKa50fbHlGOBwA9fLasXnSvYkw+7luNVIXe7CvY1ljLUUQAnA=
+-----END CERTIFICATE-----

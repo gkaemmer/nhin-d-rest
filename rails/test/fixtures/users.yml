@@ -1,0 +1,17 @@
+drjones:
+  login: drjones@nhin.happyvalleypractice.example.org
+  password_salt: <%= salt = Authlogic::Random.hex_token %>
+  crypted_password: <%= Authlogic::CryptoProviders::Sha512.encrypt("drjones_secret" + salt) %>
+  persistence_token: <%= Authlogic::Random.hex_token %>
+
+drsmith:
+  login: drsmith@nhin.sunnyfamilypractice.example.org
+  password_salt: <%= salt = Authlogic::Random.hex_token %>
+  crypted_password: <%= Authlogic::CryptoProviders::Sha512.encrypt("drsmith_secret" + salt) %>
+  persistence_token: <%= Authlogic::Random.hex_token %>
+  
+stranger:
+    login: strange@stranger.example.org
+    password_salt: <%= salt = Authlogic::Random.hex_token %>
+    crypted_password: <%= Authlogic::CryptoProviders::Sha512.encrypt("strange_secret" + salt) %>
+    persistence_token: <%= Authlogic::Random.hex_token %>
