@@ -11,6 +11,8 @@ import java.util.TreeSet;
 
 import javax.mail.internet.AddressException;
 
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
 import org.nhindirect.platform.DomainService;
 import org.nhindirect.platform.HealthAddress;
 
@@ -22,7 +24,7 @@ public class BasicDomainService implements DomainService {
     private Map<String, HealthAddress> domainAddresses;
     private Map<String, Set<HealthAddress>> userAddresses;
 
-    // private Log log = LogFactory.getLog(BasicDomainService.class);
+    private Log log = LogFactory.getLog(BasicDomainService.class);
 
     public void init() throws IOException {
         domains = new TreeSet<String>();
@@ -70,6 +72,8 @@ public class BasicDomainService implements DomainService {
                 }
             }
         }
+        
+        log.debug("loaded " + domains.size() + " domains with a total of " + addressUsers.size() + " addresses.");
     }
 
     private Set<String> getUserSet(String userprop) {
