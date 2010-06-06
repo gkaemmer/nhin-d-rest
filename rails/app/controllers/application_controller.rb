@@ -13,13 +13,13 @@ class ApplicationController < ActionController::Base
     @@hisp_actions.concat actions
   end
   
-  def remote_hisp
+  def remote_hisp(domain, endpoint)
     client_certs = Cert.find_by_scope(:hisp)
     cert = client_certs && client_certs[0]
-    hisp = RemoteHISP.new(params[:domain],
-      :cert => {:cert => cert.cert, :key => cert.key },
+    hisp = RemoteHISP.new(domain,
+      :cert => {:cert => OpenSSL::X509::Certificate.new(cert.cert), :key => OpenSSL::PKey::RSA.new(cert.key) },
       :basic => {:user => "#{params[:endpoint]}@#{params[:domain]}", :pw => 'anything'})
-    hisp.address = "#{params[:endpoint]}@#{params[:domain]}"
+    hisp.address = "#{endpoint}@#{domain}"
     hisp
   end
   

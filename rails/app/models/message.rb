@@ -36,23 +36,20 @@ class Message < ActiveRecord::Base
     return m_type == 'application/pkcs7-mime' || m_type == 'application/x-pkcs7-mime'
   end
   
-  def signed_mime_package
-    from_cert, from_key, to_certs = Cert.find_mutually_trusted_cred_set_for_send(parsed_message.to, parsed_message.from)
+  def signed_mime_package(from_cert, from_key)
     p7sig = OpenSSL::PKCS7::sign(from_cert, from_key, parsed_message.mime_package, [], OpenSSL::PKCS7::DETACHED)
     smime = OpenSSL::PKCS7::write_smime(p7sig, parsed_message.mime_package)
     smime.gsub("MIME-Version: 1.0\n", '')
   end
     
-  def signed_and_encrypted
-    from_cert, from_key, to_certs = Cert.find_mutually_trusted_cred_set_for_send(parsed_message.to, parsed_message.from)
-    encrypted = OpenSSL::PKCS7::encrypt(to_certs, self.signed_mime_package)
+  def signed_and_encrypted(from_cert, from_key, to_certs)
+    encrypted = OpenSSL::PKCS7::encrypt(to_certs, self.signed_mime_package(from_cert, from_key))
     smime = OpenSSL::PKCS7::write_smime(encrypted)
     parsed_message.non_mime_headers + smime
   end
   
-  def self.decrypt(text)
+  def self.decrypt(text, key_cert_pairs)
     message = Mail.new(text)
-    key_cert_pairs = Cert.find_key_cert_pairs_for_address(message.to)
     p7enc = OpenSSL::PKCS7::read_smime(text)
     for p in key_cert_pairs
       decrypted = p7enc.decrypt(p[:key], p[:cert])
@@ -62,9 +59,9 @@ class Message < ActiveRecord::Base
     return nil
   end
           
-  def signature_verified?
+  def signature_verified_by_certs? (certs)
     store = Cert.trust_store
-    Cert.add_sender_certs(store, self.parsed_message.from[0])
+    certs.each {|c| store.add_cert c }
     begin
       p7enc = OpenSSL::PKCS7::read_smime(self.parsed_message.raw_source)
     rescue OpenSSL::PKCS7::PKCS7Error

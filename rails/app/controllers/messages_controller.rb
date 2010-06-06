@@ -43,8 +43,14 @@ class MessagesController < ApplicationController
   end
   
   def create_remote
-    @hisp = remote_hisp
-    loc = @hisp.create_message @message.signed_and_encrypted
+    to_addr = Mail::Address.new(@message.parsed_message.to[0])
+    from_addr = Mail::Address.new(@message.parsed_message.from[0])
+    @hisp = remote_hisp(to_addr.domain, to_addr.local)
+    from_certs = Cert.find_by_address(from_addr.domain, from_addr.local)
+    from_cert = OpenSSL::X509::Certificate.new(from_certs[0].cert)
+    from_key =  OpenSSL::PKey::RSA.new(from_certs[0].key)
+    to_certs = @hisp.certs
+    loc = @hisp.create_message @message.signed_and_encrypted from_cert, from_key, to_certs
     
     respond_to do |format|
       if loc
@@ -60,7 +66,11 @@ class MessagesController < ApplicationController
   # POST /messages.xml
   def create
     @message = Message.new(:raw_message => params[:message][:raw_message])
-    return create_remote if Domain.remote? params[:domain]
+    if  @message.valid?
+      #TODO: multiple to
+      a = Mail::Address.new(@message.parsed_message.to[0])
+      return create_remote if Domain.remote? a.domain
+    end
     return unless validate_message_security
     
     respond_to do |format|

@@ -3,6 +3,9 @@
 # Specifies gem version of Rails to use when vendor/rails is not present
 RAILS_GEM_VERSION = '2.3.5' unless defined? RAILS_GEM_VERSION
 
+# CA Cert bundle to be used by RemoteHISP object
+NHIN_D_CA_FILE = File.join(File.dirname(__FILE__), 'ca_file.pem')
+
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
 
