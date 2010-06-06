@@ -1,20 +1,19 @@
 class Cert < ActiveRecord::Base
   
   
-  def self.get_remote_certs(addr)
+  def self.get_remote_certs(addr, hisp)
     address = Mail::Address.new(addr)
-    hisp = RemoteHISP.new(address.domain)
     hisp.address = "#{address.local}@#{address.domain}"
     hisp.certs
   end
   
-  def self.find_mutually_trusted_cred_set_for_send(to, from)
+  def self.find_mutually_trusted_cred_set_for_send(to, from, hisp)
     to = to[0]
     from = from[0]
     #TODO: handle multiple to, from
     addr = Mail::Address.new(from)
     from_certs = Cert.find_by_address(addr.domain, addr.local)
-    to_certs = Cert.get_remote_certs(to)
+    to_certs = Cert.get_remote_certs(to, hisp)
     #TODO: filter TO certs by trust anchors
     #TODO: filter FROM certs by TO trust anchor
     from_cert = from_certs.first
@@ -47,14 +46,7 @@ class Cert < ActiveRecord::Base
     # TODO: include org and user certs as well by configuration
     certs = self.find_by_scope(:hisp)
   end    
-  
-  def self.add_sender_certs(store, from_addr)
-    #TODO: Support multiple from addrs
-    self.get_remote_certs(from_addr).collect do |c|
-      store.add_cert c
-    end
-  end
-    
+      
   def self.find_by_scope(symbol)
     self.find(:all, :conditions => ['scope = ?', @@SCOPES[symbol]])
   end

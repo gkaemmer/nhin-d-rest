@@ -20,9 +20,11 @@ class MessageTest < ActiveSupport::TestCase
   
   should 'be signable and verifiable' do
     m = Message.new(:raw_message => SAMPLE_MESSAGE)
-    RemoteHISP.any_instance.stubs(:certs).returns [OpenSSL::X509::Certificate.new(TO_CRT)]
-    t = m.signed_and_encrypted
-    m2 = Message.decrypt(t)
+    f = Mail::Address.new(m.parsed_message.from[0])
+    from_cert = Cert.find_by_address(f.domain, f.local).first
+    to_cert = [OpenSSL::X509::Certificate.new(TO_CRT)]
+    t = m.signed_and_encrypted OpenSSL::X509::Certificate.new(from_cert.cert), OpenSSL::PKey::RSA.new(from_cert.key), to_cert
+    m2 = Message.decrypt(t, [{ :cert => OpenSSL::X509::Certificate.new(from_cert.cert),  :key => OpenSSL::PKey::RSA.new(from_cert.key) }] )
     parsed = m2.parsed_message
     assert_not_nil parsed
     assert_not_nil parsed.from
@@ -30,7 +32,7 @@ class MessageTest < ActiveSupport::TestCase
     assert_equal 'drsmith@nhin.sunnyfamilypractice.example.org', parsed.from[0]
     assert_equal 'drjones@nhin.happyvalleypractice.example.org', parsed.to[0]
     assert_equal 'This is the third document I am sending you', parsed.parts[0].parts[0].body.raw_source
-    assert m2.signature_verified?
+    assert m2.signature_verified_by_certs? to_cert
   end
   
   should 'detect if encrypted' do

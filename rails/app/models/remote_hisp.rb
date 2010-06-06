@@ -3,7 +3,7 @@ require 'net/https'
 require 'feedzirra'
 
 class RemoteHISP
-  attr_reader :version_path, :domain, :user, :pw, :cert, :key, :port, :http
+  attr_reader :version_path, :domain, :user, :pw, :cert, :key, :port, :http, :response
 
   def set_auth_type(sym)
     @use_basic_auth = sym == :basic || sym = :both
@@ -44,9 +44,10 @@ class RemoteHISP
     auth_options(options)
     @domain = hisp_domain
     @version_path = '/nhin/v1'
-    @port = options[:port] || '433'
+    @port = options[:port] || Net::HTTP.https_default_port
     @http = Net::HTTP.new(@domain, @port)
     options[:ssl] = true if options[:ssl].nil?
+    @http.ca_file = NHIN_D_CA_FILE
     @http.use_ssl = options[:ssl]
     if cert_auth? then
       @http.use_ssl = true
@@ -86,7 +87,7 @@ class RemoteHISP
   def messages
     begin
       feed = Feedzirra::Feed.parse(get(messages_path, 'application/atom+xml'))
-    rescue Feezirra::NoParserAvailable
+    rescue Feedzirra::NoParserAvailable
       return nil
     end
     feed.entries.collect { |entry|  URI::split(entry.url)[5]}
