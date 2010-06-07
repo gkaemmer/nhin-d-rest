@@ -15,7 +15,12 @@
  	<security:global-method-security pre-post-annotations="enabled"/>
  	
 	<bean id="fileMessageStore" class="org.nhindirect.platform.basic.BasicFileMessageStore" />
-	<bean id="certificateService" class="org.nhindirect.platform.basic.BasicCertificateService" />
+	<bean id="certificateService" class="org.nhindirect.platform.basic.BasicCertificateService">
+		<property name="generateEndpointCerts" value="true"/>
+		<property name="caKeystoreFilename" value="etc/endpoint-ca.jks"/>
+		<property name="caKeystorePassword" value=""/>
+		<property name="caPrivateKeyPassword" value=""/>
+	</bean>
 	<bean id="messageService" class="org.nhindirect.platform.basic.BasicMessageService"  init-method="init" >
 		<property name="smtpPropsFilename" value="etc/smtp.properties"/>
 		<property name="smtpUser" value="NHIN"/>

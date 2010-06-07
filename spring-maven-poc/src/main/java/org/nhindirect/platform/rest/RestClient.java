@@ -1,6 +1,5 @@
 package org.nhindirect.platform.rest;
 
-import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,11 +26,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
-import org.apache.http.client.methods.HttpPut;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.ssl.SSLSocketFactory;
 import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.CoreConnectionPNames;
@@ -148,38 +145,6 @@ public class RestClient {
             response.getEntity().consumeContent();
 
             return locationHeader.getValue();
-        } catch (Exception e) {
-            // TODO: Better error handling
-            throw new MessageServiceException(e);
-        }
-    }
-
-    /**
-     * Returns value of Location HTTP response header.
-     */
-    public String putStatus(Message message) throws MessageServiceException {
-
-        try {
-            String url = "https://" + message.getFrom().getDomain() + "/nhin/v1/" + message.getTo().getDomain() + "/"
-                    + message.getTo().getEndpoint() + "/messages/" + message.getMessageId() + "/status";
-            HttpPut request = new HttpPut(url);
-            request.setHeader("Content-Type", "text/plain");
-            request.setEntity(new StringEntity(message.getStatus().toString()));
-
-            HttpResponse response = httpClient.execute(request);
-
-            BufferedReader in = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-            String responseString = in.readLine();
-            log.debug("responseString: " + responseString);
-            in.close();
-
-            if (response.getStatusLine().getStatusCode() != 200) {
-                throw new MessageServiceException("Error returned from source HISP: "
-                        + response.getStatusLine().toString() + " : " + responseString);
-            }
-
-            response.getEntity().consumeContent();
-            return responseString;
         } catch (Exception e) {
             // TODO: Better error handling
             throw new MessageServiceException(e);
