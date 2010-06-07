@@ -220,30 +220,13 @@ public class BasicMessageService extends AbstractUserAwareClass implements Messa
 
     public void setMessageStatus(HealthAddress address, UUID messageId, MessageStatus status)
             throws MessageStoreException, MessageServiceException {
-        // If it's an edge, validate the user can access this address
-        if (hasRole("ROLE_EDGE")) {
-            if (!validateUserForAddress(address)) {
-                throw new MessageServiceException("User " + getUser().getUsername() + " not provisioned for address "
-                        + address);
-            }
+        if (!validateUserForAddress(address)) {
+            throw new MessageServiceException("User " + getUser().getUsername() + " not provisioned for address "
+                    + address);
         }
-
-        // If it were an HISP, we may want to validate that the HISP has permission to set status
-        // for this message by checking to see if the CN in the cert (username) has the same DNS
-        // resolution as the domain from the TO address
-
-        // But for now, we won't.
 
         messageStore.setMessageStatus(address, messageId, status);
 
-        if (hasRole("ROLE_EDGE")) {
-
-            Message message = messageStore.getMessage(address, messageId);
-
-            if (!domainService.isLocalAddress(message.getFrom())) {
-                restClient.putStatus(message);
-            }
-        }
     }
 
     private Message createMessage(String rawMessage) throws MessageStoreException {

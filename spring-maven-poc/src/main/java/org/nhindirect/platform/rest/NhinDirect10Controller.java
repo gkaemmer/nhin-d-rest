@@ -125,7 +125,7 @@ public class NhinDirect10Controller extends AbstractNhinDirectController {
      * recipient changing the status, then store the change and PUT that status back to the sender
      * HISP. If if the's destination HISP pushing the status back, then store the status change.
      */
-    @PreAuthorize("hasRole('ROLE_EDGE') or hasRole('ROLE_HISP')")
+    @PreAuthorize("hasRole('ROLE_EDGE')")
     @RequestMapping(value = "/messages/{messageId}/status", method = RequestMethod.PUT)
     public void setMessageStatus(HttpServletResponse response, @PathVariable("healthDomain") String healthDomain,
                                  @PathVariable("healthEndpoint") String healthEndpoint,
