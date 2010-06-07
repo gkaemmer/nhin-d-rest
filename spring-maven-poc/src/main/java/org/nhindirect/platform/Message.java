@@ -90,8 +90,12 @@ public class Message {
 
         try {
             MimeMessage message = new MimeMessage(session, in);
-            from = HealthAddress.parseEmailAddress(message.getHeader("from", ","));
-            to = HealthAddress.parseEmailAddress(message.getHeader("to", ","));
+            this.from = HealthAddress.parseEmailAddress(message.getHeader("from", ","));
+            this.to = HealthAddress.parseEmailAddress(message.getHeader("to", ","));
+            String tmpSubject = message.getSubject();
+            if (tmpSubject != null && !tmpSubject.isEmpty()) {
+            	this.subject = tmpSubject;
+            }
         } catch (MessagingException e) {
             throw new RuntimeException(e);
         }
